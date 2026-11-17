@@ -110,8 +110,12 @@ def find_month():
         yield f"{y}{m:02d}"
 
 def dong_rows(path, ym):
-    j = get(path, {"admmCd": "4121000000", "stdgYm": ym, "lv": 3, "regSeCd": 1,
+    # 공공데이터포털 명세: 조회시작년월 srchFrYm, 조회종료년월 srchToYm (둘 다 필요)
+    j = get(path, {"admmCd": "4121000000", "srchFrYm": ym, "srchToYm": ym, "lv": 3, "regSeCd": 1,
                    "type": "JSON", "numOfRows": 100, "pageNo": 1})
+    if isinstance(j, dict):
+        h = j.get("Response", {}).get("head", {}) if isinstance(j.get("Response"), dict) else j.get("head", j.get("header", {}))
+        print(f"  {path.rsplit('/',1)[-1]} {ym}: 응답 헤더 {json.dumps(h, ensure_ascii=False)[:160]}")
     out = {}
     for r in items_of(j):
         nm = norm(str(pick(r, ["dongNm", "admmNm", "dongName"]) or ""))

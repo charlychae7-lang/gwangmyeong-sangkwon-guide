@@ -441,7 +441,7 @@ V['trend-trend']=()=>NA('트렌드 분석','관심이 늘고 있는 업종 키�
 V['trend-sns']=()=>NA('SNS 분석','동네·업종에 대한 SNS 언급량과 분위기를 보는 화면입니다.','SNS 수집·분석 데이터','');
 V['trend-festival']=()=>{
   const P=[['광명동굴','관광객이 오가는 곳 주변은 카페·식당·기념품 업종을 생각해 볼 수 있습니다.'],['광명전통시장','시장 상인과 연계한 먹거리, 지역화폐 연계 행사를 생각해 볼 수 있습니다.'],['광명업사이클아트센터','체험·교육 프로그램 이용객 대상 상품을 생각해 볼 수 있습니다.'],['광명역 일대','철도·대형 상업시설 이용객 대상 업종을 생각해 볼 수 있습니다.'],['철산 상업지구','저녁·주말 방문객 대상 음식·여가 업종을 생각해 볼 수 있습니다.']];
-  return head('관광·축제정보','광명의 대표 방문지를 업종 아이디어와 연결해 봅니다.')+`<p class="note">아래는 제작자의 일반적인 활용 아이디어이며 방문객 수 등 통계에 근거한 것이 아닙니다. 행사 일정·운영 정보는 광명시 공식 공고에서 확인하세요.</p><div class="grid">${P.map(p=>`<div class="card c4"><h2>${p[0]}</h2><p style="margin:0">${p[1]}</p></div>`).join('')}<div class="card c4"><h2>일정 확인</h2><a class="lnk" href="https://www.gm.go.kr" target="_blank" rel="noopener"><b>광명시청 바로가기</b><span class="small">행사·축제 일정 공고</span></a></div></div>`;
+  return head('관광·축제정보','광명의 대표 방문지를 업종 아이디어와 연결해 봅니다.')+`<p class="note">아래는 제작자의 일반적인 활용 아이디어이며 방문객 수 등 통계에 근거한 것이 아닙니다. 행사 일정·운영 정보는 광명시 공식 공고에서 확인하세요. (작성일 2026.11.17)</p><div class="grid">${P.map(p=>`<div class="card c4"><h2>${p[0]}</h2><p style="margin:0">${p[1]}</p></div>`).join('')}<div class="card c4"><h2>일정 확인</h2><a class="lnk" href="https://www.gm.go.kr" target="_blank" rel="noopener"><b>광명시청 바로가기</b><span class="small">행사·축제 일정 공고</span></a></div></div>`;
 };
 V['trend-news']=()=>head('소상공인 뉴스','뉴스 본문은 저작권 때문에 담지 않고, 공식 소식 창구로 연결합니다.')+`<div class="grid">${LINK('https://bigdata.sbiz.or.kr','소상공인365 뉴스','소상공인 관련 최신 소식')}${LINK('https://www.semas.or.kr','소상공인시장진흥공단','공단 공지와 사업 소식')}${LINK('https://www.gm.go.kr','광명시청','시정 소식과 공고')}</div>`;
 V['trend-best']=()=>head('우수 소상공인','광명시 우수 소상공인 사례를 소개하는 자리입니다.')+`<p class="note">아직 등록된 사례가 없습니다. 실제 사례는 선정 기관의 공개 자료와 당사자 동의를 확인한 뒤 채워 주세요.</p><div class="grid">${LINK('https://www.semas.or.kr','소상공인시장진흥공단 우수 사례','전국 우수 소상공인 소개')}</div>`;
@@ -456,7 +456,7 @@ const SUP=[
  ['전통시장·상점가 활성화','광명시','환경 개선','성장','https://www.gm.go.kr','대상 시장과 공모 일정 확인 필요']];
 function supportView(title,lead){
   const fs=['전체','국가','경기도','광명시'],f=S.sup||'전체',rows=SUP.filter(s=>f==='전체'||s[1]===f);
-  return head(title,lead)+`<p class="note">사업명과 주관 기관 중심의 <b>안내 목록</b>이며 최신·정확함을 보증하지 않습니다. 사업이 없어졌거나 조건이 바뀌었을 수 있으니 금액, 기간, 자격은 반드시 링크의 <b>공식 공고</b>에서 확인하세요. 이 사이트는 신청을 대행하지 않습니다.</p><div class="chips">${fs.map(x=>`<button class="chip ${f===x?'on':''}" data-sup="${x}">${x}</button>`).join('')}</div>
+  return head(title,lead)+`<p class="note">사업명과 주관 기관 중심의 <b>안내 목록</b>이며 최신·정확함을 보증하지 않습니다. 사업이 없어졌거나 조건이 바뀌었을 수 있으니 금액, 기간, 자격은 반드시 링크의 <b>공식 공고</b>에서 확인하세요. 이 사이트는 신청을 대행하지 않습니다. <b>목록 작성일: 2026.11.17</b> (제작자가 정리한 시점이며, 이후 바뀐 내용은 반영되지 않았습니다.)</p><div class="chips">${fs.map(x=>`<button class="chip ${f===x?'on':''}" data-sup="${x}">${x}</button>`).join('')}</div>
   <div class="card scroll"><table><tr><th>사업</th><th>주체</th><th>유형</th><th>단계</th><th>확인할 것</th><th>공식 링크</th></tr>${rows.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td><td style="white-space:normal;text-align:left">${s[5]}</td><td><a href="${s[4]}" target="_blank" rel="noopener">열기</a></td></tr>`).join('')}</table></div>`;
 }
 V['trend-policy']=()=>supportView('소상공인 정책','국가, 경기도, 광명시 단위의 소상공인 정책 창구를 한곳에 모았습니다.');

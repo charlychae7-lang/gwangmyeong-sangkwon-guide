@@ -7,6 +7,8 @@ import json, os, re, sys, time, datetime, urllib.parse, urllib.request
 BASE = os.environ.get("API_BASE", "https://apis.data.go.kr")
 RAW_KEY = os.environ.get("DATA_GO_KR_KEY", "").strip()
 OUT = os.environ.get("OUT_FILE", "data.json")
+HIST_FILE = os.environ.get("HIST_FILE", "history.json")   # 월별 기록(업소 수 추이, 개업·폐업 추정)
+IDS_FILE = os.environ.get("IDS_FILE", "ids.json")          # 직전 기준월의 사업장 ID 목록(다음 비교용)
 DN = ["광명1동","광명2동","광명3동","광명4동","광명5동","광명6동","광명7동","소하1동","소하2동","일직동",
       "철산1동","철산2동","철산3동","철산4동","하안1동","하안2동","하안3동","하안4동","학온동"]
 CATS = ["교육","음식","과학기술","수리개인","소매","시설관리임대","부동산","보건의료","숙박","예술스포츠"]
@@ -83,13 +85,21 @@ def fetch_stores():
     ci = {c: i for i, c in enumerate(CATS)}
     RD = {n: [0] * 10 for n in DN}
     skipped = 0
+    IDS, no_id = {}, 0          # 사업장ID -> 동번호*10+업종번호 (개업·폐업 비교용)
     for r in rows:
         dn = norm(r.get("adongNm")); cat = norm(r.get("indsLclsNm"))
-        if dn in RD and cat in ci: RD[dn][ci[cat]] += 1
+        if dn in RD and cat in ci:
+            RD[dn][ci[cat]] += 1
+            bid = str(r.get("bizesId") or "").strip()
+            if bid: IDS[bid] = DN.index(dn) * 10 + ci[cat]
+            else: no_id += 1
         else: skipped += 1
     print(f"상가 {len(rows)}건 수집, 제외 {skipped}건, 기준월 {stdr}")
     if not re.fullmatch(r"\d{6}", str(stdr or "")): die(f"상가정보 기준월을 알 수 없습니다({stdr}).")
-    return RD, str(stdr)
+    if no_id or not IDS:
+        print(f"사업장ID가 없는 상가가 {no_id}건이라 이번에는 개업·폐업 비교를 하지 않습니다.")
+        IDS = None
+    return RD, str(stdr), IDS
 
 # ---------- 인구 ----------
 def find_month():
@@ -151,14 +161,58 @@ def validate(RD, POP, old):
         if not 0.9 <= pt / op <= 1.1: die(f"인구 합계가 직전 값과 10% 이상 차이({op}→{pt}). 수동 확인 필요.")
     print(f"검증 통과: 업소 {st:,}곳, 인구 {pt:,}명")
 
+# ---------- 월별 기록·개업/폐업 추정 ----------
+def load_json(path):
+    try:
+        with open(path, encoding="utf-8") as f: return json.load(f)
+    except Exception:
+        return None
+
+def update_history(RD, stdr, IDS, old):
+    """기준월이 새로 바뀔 때만 한 줄을 더합니다. 개업/폐업은 '직전 기준월과 이번 기준월의 사업장ID 차이'로 추정합니다.
+    (공식 개폐업률이 아니라 상가정보 목록에 새로 나타나거나 사라진 업소 수입니다.)
+    반환: (새 history 또는 None, 새 ids 문서 또는 None)"""
+    hist = load_json(HIST_FILE) or {"months": []}
+    months = hist.get("months", [])
+    prev = load_json(IDS_FILE)
+    if not months and old and old.get("RD") and old.get("stdr") and old["stdr"] != stdr:
+        months.append({"ym": old["stdr"], "RD": old["RD"], "open": None, "close": None, "from": None})
+    if any(m.get("ym") == stdr for m in months):
+        ids_doc = {"stdr": stdr, "ids": IDS} if (IDS is not None and (not prev or prev.get("stdr") != stdr)) else None
+        return None, ids_doc
+    opn = cls = frm = None
+    if IDS is not None and prev and isinstance(prev.get("ids"), dict) and prev.get("stdr") not in (None, stdr):
+        pids = prev["ids"]
+        new = IDS.keys() - pids.keys(); gone = pids.keys() - IDS.keys()
+        if len(new) + len(gone) > 0.4 * max(len(pids), 1):
+            print(f"경고: 직전 대비 변동이 너무 커서({len(pids)}→{len(IDS)}) 개업·폐업 추정을 기록하지 않습니다.")
+        else:
+            opn = {n: [0] * 10 for n in DN}; cls = {n: [0] * 10 for n in DN}
+            for b in new:  c = IDS[b];  opn[DN[c // 10]][c % 10] += 1
+            for b in gone: c = pids[b]; cls[DN[c // 10]][c % 10] += 1
+            frm = prev["stdr"]
+            print(f"개업 추정 {len(new)}곳, 폐업 추정 {len(gone)}곳 ({frm} → {stdr})")
+    months.append({"ym": stdr, "RD": RD, "open": opn, "close": cls, "from": frm})
+    hist["months"] = months[-36:]
+    hist["note"] = "open/close는 직전 기준월 대비 상가정보 목록에 새로 나타나거나 사라진 업소 수의 추정치이며 공식 개폐업률이 아닙니다."
+    ids_doc = {"stdr": stdr, "ids": IDS} if IDS is not None else None
+    return hist, ids_doc
+
+def dump(path, obj):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, separators=(",", ":"))
+
 def main():
     old = None
     if os.path.exists(OUT):
         try: old = json.load(open(OUT, encoding="utf-8"))
         except Exception: old = None
-    RD, stdr = fetch_stores()
+    RD, stdr, IDS = fetch_stores()
     POP, ym = fetch_pop()
     validate(RD, POP, old)
+    hist, ids_doc = update_history(RD, stdr, IDS, old)   # 검증을 통과한 뒤에만 기록
+    if hist is not None: dump(HIST_FILE, hist); print("history.json 갱신")
+    if ids_doc is not None: dump(IDS_FILE, ids_doc)
     new = {"RD": RD, "POP": POP, "stdr": stdr, "popYm": ym}
     if old and all(old.get(k) == new[k] for k in new):
         print("변경 없음: data.json 그대로 둡니다."); return

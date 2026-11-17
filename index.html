@@ -281,11 +281,11 @@ const MENU=[
  ['analysis','빅데이터 상권분석',[['simple','간단분석'],['detail','상세분석'],['theme','테마분석'],['location','입지분석'],['industry','업종분석'],['compete','경쟁분석'],['delivery','배달분석'],['status','상권지도'],['weather','창업기상도']]],
  ['diagnose','내 가게 경영진단',[['bigdata','빅데이터 경영진단'],['startup','창업역량 자가진단'],['export','수출입역량 자가진단'],['digital','디지털수준 자가진단']]],
  ['trend','상권·시장 트렌드',[['trend','트렌드 분석'],['sns','SNS 분석'],['festival','관광·축제정보'],['news','소상공인 뉴스'],['best','우수 소상공인'],['policy','소상공인 정책'],['support','지원사업 안내']]],
- ['stats','소상공인 대시보드',[['main','주요 통계'],['sales','매출 통계'],['shops','업소 통계'],['change','업소 증감(추정)'],['pop','인구 통계'],['national','소상공인 통계(국가승인)']]],
+ ['stats','소상공인 대시보드',[['main','주요 통계'],['sales','매출 통계'],['shops','업소 통계'],['change','업소 증감(추정)'],['compare','동 비교'],['pop','인구 통계'],['national','소상공인 통계(국가승인)']]],
  ['gm','광명형 특화',[['circular','지역순환경제 지표'],['zones','생활권별 비교'],['gsupport','광명 지원사업']]],
  ['guide','이용안내',[['terms','이용조건·출처·면책'],['intro','서비스 소개'],['data','기준 데이터'],['opendata','공공데이터 안내'],['notice','공지사항'],['qna','문의사항'],['manual','매뉴얼'],['sitemap','사이트맵']]]
 ];
-const S={m:'analysis',s:'simple',dong:'철산3동',up:'음식',rs:{dong:'철산3동',up:'음식'},lm:true,metric:'shops',theme:'주거 밀집',radius:500,w:{pop:35,comp:30,hh:20,age:15},zone:['철산','하안'],diag:null,ans:{},res:{}};
+const S={m:'analysis',s:'simple',dong:'철산3동',up:'음식',rs:{dong:'철산3동',up:'음식'},lm:true,metric:'shops',theme:'주거 밀집',radius:500,w:{pop:35,comp:30,hh:20,age:15},zone:['철산','하안'],dc:['철산3동','하안2동'],diag:null,ans:{},res:{}};
 const $=s=>document.querySelector(s);
 function go(m,s){S.m=m;S.s=s;try{history.replaceState(null,'','#'+m+'-'+s)}catch(e){}render();window.scrollTo(0,0)}
 function ctrl(opts={}){
@@ -501,6 +501,28 @@ V['stats-change']=()=>{
   }
   return head0+`<div class="grid">${kp}${tbl}${rk}</div>`+wait+note+srcLine(SRC_S+' · 이 사이트가 매월 쌓은 기록으로 계산한 값입니다(공식 통계 아님)');
 };
+V['stats-compare']=()=>{
+  const up=S.up,[a,b]=S.dc,A=M(a,up),B=M(b,up),C=M('광명시 전체',up);
+  const sel=i=>`<label>행정동 ${i?'B':'A'}<select data-dc="${i}">${DN.map(n=>`<option ${S.dc[i]===n?'selected':''}>${n}</option>`).join('')}</select></label>`;
+  const fs=[m=>m.shops,m=>m.pop,m=>m.per1000,m=>m.young,m=>m.old];
+  const mx=fs.map(g=>Math.max(...DN.map(n=>g(M(n,up))))||1),sc=m=>fs.map((g,i)=>g(m)/mx[i]*100);
+  const cmp=(x,y,hi,lo)=>x===y?'같습니다':(x>y?hi:lo);
+  const same=a===b;
+  const lines=same?[]:[
+   `${a}에는 ${up} 업소가 ${f0(A.shops)}개로, ${b}(${f0(B.shops)}개)보다 ${cmp(A.shops,B.shops,'많','적')}${A.shops===B.shops?'':'습니다'}.`,
+   `인구 1천명당으로 보면 ${a} ${f1(A.per1000)}개, ${b} ${f1(B.per1000)}개로 ${A.per1000===B.per1000?'같습니다':('인구 대비 업소는 '+(A.per1000>B.per1000?a:b)+' 쪽이 더 많습니다')}.`,
+   `20~30대 비율은 ${a} ${f1(A.young)}%, ${b} ${f1(B.young)}%이고, 60세 이상은 ${a} ${f1(A.old)}%, ${b} ${f1(B.old)}%입니다.`,
+   `광명시 평균(인구 1천명당 ${f1(C.per1000)}개)과 비교하면 ${a} ${f2(A.per1000/C.per1000)}배, ${b} ${f2(B.per1000/C.per1000)}배 수준입니다.`];
+  const row=(l,g,fmt,u)=>`<tr><td>${l}</td><td>${fmt(g(A))}${u||''}</td><td>${fmt(g(B))}${u||''}</td><td>${fmt(g(C))}${u||''}</td></tr>`;
+  return head('동 비교','두 행정동을 나란히 놓고, 고른 업종 기준으로 업소와 주민 구성을 비교합니다.')
+  +`<div class="bar">${sel(0)}${sel(1)}<label>업종<select data-set="up">${UP.map(n=>`<option ${S.up===n?'selected':''}>${n}</option>`).join('')}</select></label></div>`
+  +(same?`<p class="note">서로 다른 두 동을 골라 주세요.</p>`:'')
+  +`<div class="grid"><div class="card c5"><h2>${a} vs ${b} (19개 동 중 최대값=100)</h2>${radar(['업소 수','인구','1천명당 업소','20~30대','60세↑'],[{n:a,v:sc(A)},{n:b,v:sc(B)}])}<p class="small">업종: ${up}</p></div>
+  <div class="card c7 scroll"><h2>항목별 비교 (${up})</h2><table><tr><th>항목</th><th>${a}</th><th>${b}</th><th>광명시 전체</th></tr>
+  ${row('업소 수',m=>m.shops,f0,'개')}${row('거주 인구',m=>m.pop,f0,'명')}${row('세대 수',m=>m.hh,f0,'세대')}${row('인구 1천명당 업소',m=>m.per1000,f1,'개')}${row('업종 특화도(LQ)',m=>m.lq,f2)}${row('20~30대 비율',m=>m.young,f1,'%')}${row('60세 이상 비율',m=>m.old,f1,'%')}${row('인구밀도(명/㎢)',m=>m.dens,f0)}</table></div>
+  ${same?'':`<div class="card c12"><h2>한 줄 요약</h2><ul class="t">${lines.map(l=>`<li>${l}</li>`).join('')}</ul><p class="small" style="margin:6px 0 0">이 요약은 위 숫자를 문장으로 옮긴 것으로, 좋고 나쁨을 판단하지 않습니다.</p></div>`}</div>`
+  +srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C);
+};
 V['stats-national']=()=>head('소상공인 통계(국가승인)','국가승인 통계는 통계청과 중소벤처기업부의 공식 발표를 기준으로 합니다.')+`<p class="note">이 사이트는 국가승인통계를 가공해 싣지 않습니다. 아래 공식 창구에서 직접 확인하세요.</p><div class="grid">${LINK('https://kosis.kr','국가통계포털 KOSIS','전국 시군구 통계 검색')}${LINK('https://www.mss.go.kr','중소벤처기업부','소상공인 실태조사 발표')}${LINK('https://bigdata.sbiz.or.kr','소상공인365 통계','원본 통계 화면')}</div>`;
 
 /* ---------- 화면: 광명형 ---------- */
@@ -533,7 +555,7 @@ V['guide-intro']=()=>head('서비스 소개','소상공인365의 메뉴 구성�
  <tr><td>빅데이터 상권분석</td><td>상권분석 9개 탭</td><td>전국 지도 대신 광명 19개 동 단위, 업소·인구 중심. 매출·유동인구 화면은 '미제공'</td></tr>
  <tr><td>내 가게 경영진단</td><td>빅데이터 경영진단, 자가진단 3종</td><td>입력값으로 이익 구조만 계산. 동종 평균 비교 없음</td></tr>
  <tr><td>상권·시장 트렌드</td><td>트렌드, SNS, 관광·축제, 뉴스, 우수 소상공인, 정책, 지원사업</td><td>트렌드·SNS는 '미제공', 나머지는 공식 창구 안내</td></tr>
- <tr><td>소상공인 대시보드</td><td>주요·매출·업소·인구·국가승인 통계</td><td>업소·인구 통계와 업소 증감(추정) 제공</td></tr>
+ <tr><td>소상공인 대시보드</td><td>주요·매출·업소·인구·국가승인 통계</td><td>업소·인구 통계, 업소 증감(추정), 동 비교 제공</td></tr>
  <tr><td>(없음)</td><td>광명형 특화</td><td>생활권별 비교, 광명 지원사업 안내. 순환경제 지표는 자료 확보 후 연결 예정</td></tr></table></div>
  <p class="small">이 사이트는 소상공인365와 다른 비공식 사이트입니다. <a href="#guide-terms" data-go="guide|terms">이용조건·출처·면책</a>을 확인하세요.</p>`;
 V['guide-data']=()=>head('기준 데이터','어떤 값이 어디서 왔는지, 무엇이 빠져 있는지 안내합니다.')+`<div class="card scroll"><table class="tl"><tr><th>항목</th><th>구분</th><th>출처·기준</th></tr>
@@ -584,6 +606,7 @@ document.addEventListener('change',e=>{
   const t=e.target,d=t.dataset;
   if(d.set){S[d.set]=t.value}
   else if(d.zone!==undefined){S.zone[+d.zone]=t.value}
+  else if(d.dc!==undefined){S.dc[+d.dc]=t.value}
   else if(d.w){S.w[d.w]=+t.value}
   else return;
   render();

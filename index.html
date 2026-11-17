@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>광명 상권길잡이 (비공식)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* 레이아웃: 상단 로고줄 + 메뉴줄 + 하위탭줄, 본문은 12칸 그리드 카드 */
+:root{
+  --ink:#14283b; --mute:#5b6b7a; --paper:#f4f7f8; --card:#ffffff; --line:#d9e2e7;
+  --teal:#0e7c86; --teal2:#e1f1f2; --amber:#e39a0b; --amber2:#fdf1d6;
+  --good:#2f8f4e; --warn:#c98100; --bad:#c64040;
+  --f:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#e6eef3; --mute:#9fb0bd; --paper:#0f1a23; --card:#16252f; --line:#2a3c49;
+  --teal:#3cb7c3; --teal2:#173a40; --amber:#f2b134; --amber2:#3a2e14;
+  --good:#5cc27c; --warn:#e8a82c; --bad:#ee7a7a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#e6eef3; --mute:#9fb0bd; --paper:#0f1a23; --card:#16252f; --line:#2a3c49;
+  --teal:#3cb7c3; --teal2:#173a40; --amber:#f2b134; --amber2:#3a2e14;
+  --good:#5cc27c; --warn:#e8a82c; --bad:#ee7a7a; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.6}
+a{color:var(--teal)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.top{background:var(--card);border-bottom:1px solid var(--line)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:12px;padding:14px 0 8px;flex-wrap:wrap}
+.logo{font-weight:900;font-size:26px;letter-spacing:-1px;cursor:pointer}
+.logo b{color:var(--amber)}
+.logo span{color:var(--teal)}
+.tag{font-size:12px;color:var(--mute)}
+.sample{margin-left:auto;background:var(--amber2);color:var(--ink);border:1px solid var(--amber);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700}
+nav.main{display:flex;gap:4px;overflow-x:auto}
+nav.main button{background:none;border:0;border-bottom:4px solid transparent;padding:10px 14px;font-weight:700;white-space:nowrap;cursor:pointer;color:var(--mute)}
+nav.main button.on{color:var(--teal);border-color:var(--teal)}
+nav.main button.gm{color:var(--amber)}
+nav.main button.gm.on{border-color:var(--amber)}
+nav.sub{background:var(--teal2);border-bottom:1px solid var(--line)}
+nav.sub .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:8px;padding-bottom:8px}
+nav.sub button{border:1px solid transparent;background:none;border-radius:999px;padding:5px 14px;white-space:nowrap;cursor:pointer;font-size:14px}
+nav.sub button.on{background:var(--teal);color:#fff;font-weight:700}
+main{padding:20px 0 40px}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.5px}
+h2{font-size:17px;margin:0 0 10px}
+.lead{color:var(--mute);margin:0 0 16px;max-width:70ch}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+.bar label{display:flex;flex-direction:column;font-size:12px;color:var(--mute);gap:3px}
+select,input[type=number],input[type=text]{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:130px}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer}
+.btn.ghost{background:none;color:var(--teal);border:1px solid var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.c12{grid-column:span 12}.c9{grid-column:span 9}.c8{grid-column:span 8}.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}.c4{grid-column:span 4}.c3{grid-column:span 3}
+@media(max-width:860px){.c9,.c8,.c7,.c6,.c5,.c4{grid-column:span 12}.c3{grid-column:span 6}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.kpi .v{font-size:26px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--mute)}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--good)}.dn{color:var(--bad)}
+.row{display:grid;grid-template-columns:96px 1fr 76px;gap:8px;align-items:center;margin:5px 0;font-size:13px}
+.row .t{background:var(--teal2);border-radius:4px;height:14px;overflow:hidden}
+.row .t i{display:block;height:100%;background:var(--teal);border-radius:4px}
+.row .n{text-align:right;font-variant-numeric:tabular-nums}
+.row.sel .t i{background:var(--amber)}
+.meter{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--good) 0 45%,var(--warn) 45% 75%,var(--bad) 75%);margin:14px 0 6px}
+.meter i{position:absolute;top:-5px;width:6px;height:24px;background:var(--ink);border-radius:3px;transform:translateX(-3px)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;border:1px solid currentColor}
+.p-good{color:var(--good)}.p-warn{color:var(--warn)}.p-bad{color:var(--bad)}.p-mute{color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-weight:700;font-size:12px}
+tr.sel td{background:var(--amber2)}
+.scroll{overflow-x:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+svg text{fill:var(--mute);font-family:var(--f)}
+.map text.dn{fill:var(--ink);font-size:10px;font-weight:700;text-anchor:middle;pointer-events:none}
+.map circle{cursor:pointer;stroke:var(--teal);stroke-width:1.5}
+.map circle.sel{stroke:var(--amber);stroke-width:4}
+.note{background:var(--amber2);border-left:4px solid var(--amber);padding:10px 14px;border-radius:6px;font-size:13px;margin:0 0 16px}
+.small{font-size:12px;color:var(--mute)}
+.q{padding:10px 0;border-bottom:1px solid var(--line)}
+.q p{margin:0 0 6px}
+.q .opts{display:flex;gap:6px;flex-wrap:wrap}
+.q .opts label{display:flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px}
+.wx{display:grid;grid-template-columns:110px repeat(5,1fr);gap:4px;font-size:12px;min-width:620px}
+.wx div{padding:8px 6px;border-radius:6px;text-align:center}
+.wx .h{color:var(--mute);font-weight:700}
+.wx .a{text-align:left;font-weight:700}
+.s-good{background:color-mix(in srgb,var(--good) 22%,var(--card))}
+.s-ok{background:color-mix(in srgb,var(--teal) 16%,var(--card))}
+.s-warn{background:color-mix(in srgb,var(--warn) 25%,var(--card))}
+.s-bad{background:color-mix(in srgb,var(--bad) 25%,var(--card))}
+details{border-bottom:1px solid var(--line);padding:10px 0}
+summary{cursor:pointer;font-weight:700}
+footer{border-top:1px solid var(--line);padding:18px 0 30px;font-size:12px;color:var(--mute)}
+.lnk{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:inherit}
+.lnk b{color:var(--teal)}
+ul.t{margin:6px 0 0;padding-left:18px}
+
+.panel .pl{font-size:12px;font-weight:700;color:var(--mute);margin:14px 0 6px}
+.panel select{background:var(--paper)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 6px;cursor:pointer;font-size:13px;font-weight:700}
+.tile.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.mapwrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.mapside{flex:1;min-width:230px}
+.mapside h3{font-size:14px;margin:0 0 6px}
+.map .dp{stroke:var(--card);stroke-width:2;cursor:pointer;stroke-linejoin:round}
+.map .dp:hover{stroke:var(--amber);stroke-width:4}
+.map .selo{fill:none;stroke:var(--amber);stroke-width:6;stroke-linejoin:round;pointer-events:none}
+.map .dl{font-size:14px;font-weight:700;text-anchor:middle;fill:var(--ink);pointer-events:none;paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.map .lmk path{fill:var(--amber);stroke:var(--ink);stroke-width:2;pointer-events:none}
+.map .lmk text{font-size:13px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
+.map .sbt{font-size:14px;fill:var(--ink)}
+.sm{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.sm h2{font-size:15px;color:var(--teal)}
+.sm button{display:block;border:0;background:none;color:var(--ink);padding:4px 0;cursor:pointer;text-align:left;font-size:14px}
+.sm button:hover{color:var(--teal);text-decoration:underline}
+.flink{background:none;border:0;color:var(--teal);cursor:pointer;text-decoration:underline;padding:0;font-size:12px}
+@media (prefers-reduced-motion:no-preference){.row .t i{transition:width .4s}}
+
+.disc{background:#7a2f00;color:#fff;font-size:13px;line-height:1.5;padding:7px 0}
+.disc .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.disc b{color:#ffe3a3}
+.disc button{background:none;border:1px solid #fff;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
+.meter2{position:relative;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--teal2),var(--teal));margin:14px 0 6px}
+.meter2 i{position:absolute;top:-5px;width:6px;height:24px;background:var(--ink);border-radius:3px;transform:translateX(-3px)}
+.meter2 u{position:absolute;left:50%;top:0;height:14px;border-left:2px dashed var(--card)}
+.src{font-size:11px;color:var(--mute);margin:12px 0 0;line-height:1.5}
+.na{border-style:dashed}
+.tl td,.tl th{text-align:left;white-space:normal;vertical-align:top}
+.disc2{border-left:6px solid #c64040}
+footer p.fd{margin:0 0 6px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="disc" role="note"><div class="wrap"><span><b>비공식 사이트</b> · 소상공인시장진흥공단·행정안전부·광명시와 <b>무관</b>합니다. 공공데이터를 가공한 <b>참고용</b>이며, 중요한 판단 전에는 <b>반드시 공식 자료를 확인</b>하세요.</span><button data-go="guide|terms">출처·면책 보기</button></div></div>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" id="logo" tabindex="0" role="link">광명 <span>상권</span><b>길잡이</b></div>
+      <div class="tag">공공데이터로 보는 광명시 상권 (19개 행정동) · 비공식</div>
+      <div class="sample">업소 2026.09 · 인구 2026.10 기준</div>
+    </div>
+    <nav class="main" id="nav" aria-label="주메뉴"></nav>
+  </div>
+  <nav class="sub" id="sub" aria-label="하위 메뉴"><div class="wrap"></div></nav>
+</header>
+<main><div class="wrap" id="view"></div></main>
+
+<footer><div class="wrap"><p class="fd"><button class="flink" data-go="guide|terms">이용조건·출처·면책</button> · <button class="flink" data-go="guide|sitemap">사이트맵</button></p>
+<p class="fd"><b>비공식 사이트 고지</b> 이 사이트는 개인이 공공데이터를 활용해 만든 비공식 사이트로, 소상공인시장진흥공단, 소상공인365, 행정안전부, 광명시 및 어떤 공공기관과도 관련이 없으며 이들이 운영·후원·보증하지 않습니다. 기관·서비스 이름은 각 소유자의 것입니다.</p>
+<p class="fd"><b>출처</b> 업소 수: 소상공인시장진흥공단 「상가(상권)정보」(공공데이터포털, 2026.09 기준) · 인구·세대·연령: 행정안전부 「주민등록 인구 및 세대현황」「행정동별 성/연령별 인구」(공공데이터포털, 2026.10 기준) · 동 경계: 통계청(현 국가데이터처) 통계지리정보서비스(SGIS) 행정동 경계(공공누리 제1유형 출처표시)를 vuski/admdongkor(CC BY 4.0, github.com/vuski/admdongkor)가 보정한 2025.04판을 이 사이트가 단순화함. 공공데이터포털 표시 이용허락범위는 제한 없음입니다.</p>
+<p class="fd"><b>유의</b> 위 자료로 이 사이트가 계산한 값(1천명당 업소 수, LQ 등)은 공식 통계가 아닌 참고 값입니다. 매출·유동인구·개폐업률 등은 공공데이터로 확인되지 않아 싣지 않았습니다. 수치의 정확성·최신성을 보증하지 않으며, 창업·대출·계약 등 중요한 판단 전에는 반드시 소상공인365와 광명시 등 공식 자료를 확인하세요. 지도 경계는 단순화되어 있고 주요 지점은 대략 위치이며, 생활권 구분은 제작자가 임의로 묶은 것입니다. 입력한 값은 서버로 전송·저장되지 않습니다.</p></div></footer>
+
+<script>
+/* ---------- 데이터 (전부 공공데이터 원자료 또는 그 합계·비율) ---------- */
+/* 1) 업소 수: 소상공인시장진흥공단 상가(상권)정보 (공공데이터포털 오픈API), 2026.09 기준
+   2) 인구·세대·성별·연령: 행정안전부 주민등록 인구 및 세대현황 / 행정동별 성·연령별 인구 (공공데이터포털 오픈API), 2026.10 기준
+   3) 행정동 경계: 통계청(현 국가데이터처) 통계지리정보서비스(SGIS) 행정동 경계(공공누리 제1유형 출처표시)를 vuski/admdongkor(CC BY 4.0, github.com/vuski/admdongkor)가 보정한 2025.04판을 이 사이트가 단순화함
+   그 밖의 지표(매출, 유동인구, 소득, 개폐업률 등)는 공공데이터로 확인되지 않아 싣지 않았습니다. */
+const SRC={shops:'2026.09',pop:'2026.10',geo:'2025.04'};
+const CATS=['교육','음식','과학·기술','수리·개인','소매','시설관리·임대','부동산','보건의료','숙박','예술·스포츠'];
+const RD={"광명1동": [13, 10, 7, 7, 10, 4, 5, 2, 0, 0], "광명2동": [10, 86, 11, 16, 44, 3, 20, 8, 16, 10], "광명3동": [42, 254, 51, 124, 417, 41, 38, 40, 17, 27], "광명4동": [44, 210, 31, 76, 140, 16, 27, 56, 13, 32], "광명5동": [25, 96, 24, 56, 95, 18, 18, 3, 2, 10], "광명6동": [38, 127, 24, 59, 122, 13, 27, 14, 1, 21], "광명7동": [62, 131, 30, 71, 134, 21, 32, 22, 2, 21], "소하1동": [174, 292, 212, 147, 219, 38, 37, 56, 1, 58], "소하2동": [74, 188, 35, 85, 127, 26, 22, 23, 5, 41], "일직동": [191, 480, 666, 207, 461, 98, 123, 29, 8, 66], "철산1동": [29, 19, 10, 14, 34, 1, 14, 7, 0, 5], "철산2동": [25, 109, 36, 63, 67, 15, 27, 5, 0, 11], "철산3동": [204, 406, 117, 172, 286, 45, 57, 117, 12, 84], "철산4동": [34, 28, 19, 28, 33, 6, 18, 5, 0, 7], "하안1동": [63, 224, 348, 111, 181, 112, 21, 9, 8, 27], "하안2동": [48, 59, 14, 40, 64, 4, 23, 22, 0, 11], "하안3동": [135, 209, 28, 96, 176, 14, 34, 38, 2, 54], "하안4동": [38, 29, 7, 24, 35, 2, 9, 17, 0, 9], "학온동": [12, 53, 41, 49, 169, 22, 37, 0, 0, 2]};
+const POPD={"광명1동":[16337,6680,7998,8339,1650,1220,1548,3786,2997,2400,1701,778,227,29,1],"광명2동":[7210,3375,3485,3725,447,445,734,1289,1053,1202,1114,641,249,36,0],"광명3동":[8740,4667,4245,4495,192,429,798,1047,981,1512,1870,1276,551,80,4],"광명4동":[7103,3337,3483,3620,257,375,631,911,873,1124,1341,1084,444,60,3],"광명5동":[11256,5047,5479,5777,453,856,1153,1412,1503,1932,2077,1259,526,83,2],"광명6동":[12386,4866,6002,6384,823,1207,1208,1713,1928,1999,1870,1157,411,70,0],"광명7동":[25104,10370,12272,12832,1801,1914,2521,4381,3978,3896,3642,2125,719,122,5],"철산1동":[9914,3803,4941,4973,614,978,1145,1722,1415,1711,1379,655,256,36,3],"철산2동":[19238,8040,9748,9490,1819,1580,1869,3285,3267,3015,2702,1261,378,62,0],"철산3동":[35016,12565,17049,17967,2498,4201,3828,4503,5821,6028,4673,2390,892,175,7],"철산4동":[8856,3621,4338,4518,613,744,936,1842,1410,1446,998,593,234,39,1],"하안1동":[24091,9733,12030,12061,1378,2851,2407,2716,3941,4371,3729,1861,676,153,8],"하안2동":[12400,6444,5761,6639,586,640,1320,2478,1821,2002,1794,1076,547,133,3],"하안3동":[17923,8534,8494,9429,905,1227,1869,2714,2412,3152,2700,1856,899,184,5],"하안4동":[11148,4981,5364,5784,589,891,1421,2012,1543,2064,1495,737,327,67,2],"소하1동":[28888,11245,13930,14958,1683,3750,3334,2918,4692,5248,3979,2278,849,153,4],"소하2동":[25342,10884,12546,12796,1049,2191,2931,2912,3215,4555,4487,2740,1082,176,4],"일직동":[21075,9016,10518,10557,1721,2314,2753,4027,3817,3441,2154,626,176,45,1],"학온동":[1575,843,878,697,28,47,102,142,143,240,426,280,124,43,0]};
+const ZN={광명:'광명',철산:'철산',하안:'하안',소하:'소하',학온:'소하',일직:'일직'};
+const UP=['음식','소매','수리·개인','교육','보건의료','부동산','과학·기술','시설관리·임대','예술·스포츠','숙박'];
+const ZONES=['광명','철산','하안','소하','일직'];
+const DN=Object.keys(RD);
+const D=DN.map(n=>({n,z:ZN[n.replace(/[0-9]?동$/,'')]}));
+/* 동 경계: 국가 행정동 경계 공개 데이터(2025.04 기준) 중 광명시 19개 동, 단순화. 주요 지점은 대략 위치 */
+const GEO={"W":632,"H":1000,"km":10.42,"dong":{"광명1동":{"d":"M311,92L310,126L298,129L284,128L268,103L259,101L269,98L273,94L275,92L281,83L299,56L302,53L303,52L304,50L315,44L348,23L348,28L346,34L341,52L336,55L326,62L325,63L324,64L323,65L322,66L307,83L309,87L311,92Z","cx":304,"cy":82},"광명2동":{"d":"M310,126L302,147L301,149L300,150L300,151L299,152L288,157L285,156L282,155L273,152L267,150L258,146L254,145L250,143L233,133L259,101L268,103L284,128L298,129L310,126Z","cx":271,"cy":132},"광명3동":{"d":"M302,147L307,192L293,187L285,183L281,182L259,174L250,169L243,167L240,166L233,165L201,153L189,148L174,143L189,136L188,138L189,139L204,144L209,144L213,145L216,144L220,144L221,144L226,141L230,137L231,136L233,134L233,133L250,143L254,145L258,146L267,150L273,152L282,155L285,156L288,157L299,152L300,151L300,150L301,149L302,147Z","cx":255,"cy":160},"광명4동":{"d":"M293,187L287,204L268,200L240,204L232,204L230,198L223,197L218,196L210,194L208,193L207,192L199,161L201,153L233,165L240,166L243,167L250,169L259,174L281,182L285,183L293,187Z","cx":241,"cy":183},"광명5동":{"d":"M201,153L199,161L207,192L208,193L210,194L218,196L223,197L230,198L219,227L206,225L203,225L191,227L190,230L176,225L169,222L166,220L168,198L169,189L169,181L169,180L170,165L174,143L189,148L201,153Z","cx":191,"cy":193},"광명6동":{"d":"M166,220L169,222L176,225L190,230L191,227L203,225L206,225L219,227L239,240L239,242L234,259L233,261L221,284L211,287L210,288L209,288L202,291L195,293L192,292L189,291L188,291L186,290L161,255L139,294L134,305L135,313L135,314L135,316L140,334L141,339L142,344L141,349L137,367L129,390L123,395L109,421L94,418L105,404L99,392L87,395L78,388L61,371L53,385L28,399L28,389L22,380L18,379L0,381L7,357L13,343L14,341L23,333L35,325L39,323L43,324L47,307L56,313L61,312L63,299L64,295L64,290L64,282L58,263L55,248L51,232L56,223L54,201L59,197L57,193L60,191L83,212L92,214L93,214L95,214L96,213L106,211L109,210L117,214L117,215L119,217L120,218L126,219L128,219L131,218L134,217L135,217L136,217L136,217L137,217L138,217L139,216L139,216L140,216L141,216L142,216L143,216L144,216L147,217L148,218L149,220L150,221L154,225L158,226L162,227L164,228L166,225L166,223L166,222L166,220Z","cx":109,"cy":298},"광명7동":{"d":"M287,204L290,204L291,205L292,205L299,212L304,246L295,270L289,285L265,317L260,351L255,385L243,395L243,395L242,395L241,396L231,396L203,397L186,396L181,401L180,408L150,414L147,410L138,403L132,400L123,395L129,390L137,367L141,349L142,344L141,339L140,334L135,316L135,314L135,313L134,305L139,294L161,255L186,290L188,291L189,291L192,292L195,293L202,291L209,288L210,288L211,287L221,284L233,261L234,259L239,242L239,240L219,227L230,198L232,204L240,204L268,200L287,204Z","cx":216,"cy":313},"철산1동":{"d":"M414,104L407,107L380,90L376,71L373,73L370,75L366,77L364,78L351,86L333,89L311,92L309,87L307,83L322,66L323,65L324,64L325,63L326,62L336,55L341,52L346,34L348,28L348,23L359,0L364,0L370,18L371,28L374,34L397,67L418,70L417,92L414,104Z","cx":366,"cy":64},"철산2동":{"d":"M407,107L407,126L397,131L391,145L356,155L355,155L353,156L351,156L350,157L350,157L349,157L349,156L348,156L348,156L347,156L347,156L336,149L331,147L326,156L322,163L322,164L322,165L321,166L321,166L321,167L321,168L321,169L321,171L321,173L322,176L322,177L322,177L322,178L322,178L321,179L320,182L319,183L319,185L317,189L315,193L313,195L307,192L302,147L310,126L311,92L333,89L351,86L364,78L366,77L370,75L373,73L376,71L380,90L407,107Z","cx":350,"cy":124},"철산3동":{"d":"M464,248L414,285L409,286L409,284L393,255L391,254L390,257L389,259L388,263L386,264L385,264L384,265L383,265L383,265L362,267L361,265L347,255L343,257L338,257L337,257L337,256L335,244L322,205L322,205L322,205L321,203L313,195L315,193L317,189L319,185L319,183L320,182L321,179L322,178L322,178L322,177L322,177L322,176L321,173L321,171L321,169L321,168L321,167L321,166L321,166L322,165L322,164L322,163L326,156L331,147L336,149L347,156L347,156L348,156L348,156L349,156L349,157L350,157L350,157L351,156L353,156L355,155L356,155L391,145L397,131L407,126L413,146L417,157L421,167L422,169L426,177L427,180L430,187L430,187L438,204L440,208L441,210L443,213L445,218L450,226L451,228L454,233L456,237L457,238L457,239L464,248Z","cx":386,"cy":210},"철산4동":{"d":"M307,192L313,195L321,203L322,205L322,205L322,205L335,244L337,256L337,257L338,257L343,257L347,255L348,259L349,260L349,262L349,264L348,266L342,276L332,289L331,290L330,291L302,273L295,270L304,246L299,212L292,205L291,205L290,204L287,204L293,187L307,192Z","cx":317,"cy":242},"하안1동":{"d":"M409,286L401,289L394,291L387,293L371,298L362,301L363,301L363,302L363,303L364,305L364,306L364,308L367,315L368,318L369,319L369,319L369,319L370,320L371,322L372,323L373,324L374,326L419,364L420,364L425,369L452,407L457,415L459,417L467,430L452,447L449,450L446,451L444,451L441,451L435,450L431,449L420,452L386,481L375,502L363,526L360,529L343,550L321,538L300,526L292,522L288,520L286,519L285,519L284,517L267,484L265,479L262,449L263,395L255,385L260,351L265,317L289,285L295,270L302,273L330,291L331,290L332,289L342,276L348,266L349,264L349,262L349,260L348,259L347,255L361,265L362,267L383,265L383,265L384,265L385,264L386,264L388,263L389,259L390,257L391,254L393,255L409,284L409,286Z","cx":342,"cy":403},"하안2동":{"d":"M456,348L430,366L425,369L420,364L419,364L374,326L373,324L372,323L371,322L370,320L369,319L369,319L369,319L368,318L367,315L364,308L364,306L364,305L363,303L363,302L363,301L362,301L371,298L387,293L394,291L401,289L409,286L414,285L456,348Z","cx":410,"cy":325},"하안3동":{"d":"M516,325L532,349L535,359L535,360L535,362L534,364L533,365L532,366L532,366L531,366L529,366L528,365L526,364L523,363L515,365L510,368L503,374L511,412L512,416L469,414L452,407L425,369L430,366L456,348L507,313L510,317L516,325Z","cx":482,"cy":369},"하안4동":{"d":"M507,313L456,348L414,285L464,248L507,313Z","cx":460,"cy":298},"소하1동":{"d":"M512,416L519,422L539,453L539,455L540,457L541,457L564,461L565,461L578,454L584,473L586,499L595,526L613,539L615,547L619,563L620,578L620,593L618,596L617,596L618,598L618,602L619,603L620,604L620,605L620,605L622,608L623,609L632,617L625,616L624,624L623,642L621,654L620,656L616,670L609,685L608,685L607,686L593,689L589,682L579,676L556,671L546,680L523,662L556,632L532,630L530,630L496,628L501,561L501,561L501,560L503,559L503,558L503,558L504,557L504,554L505,554L505,553L505,552L504,551L504,551L504,550L500,540L499,539L498,538L491,529L487,530L483,530L483,530L482,531L481,531L480,532L479,534L478,536L442,543L415,541L360,529L363,526L375,502L386,481L420,452L431,449L435,450L441,451L444,451L446,451L449,450L452,447L467,430L459,417L457,415L452,407L469,414L512,416Z","cx":519,"cy":539},"일직동":{"d":"M396,761L403,755L415,749L425,756L435,761L441,758L455,744L468,736L484,734L506,717L531,715L546,680L556,671L579,676L589,682L593,689L585,696L582,699L581,700L580,702L578,706L582,712L586,712L588,711L591,712L592,713L595,714L596,715L599,720L600,721L601,724L601,726L598,742L577,785L559,797L546,798L542,803L534,815L534,817L534,819L534,819L534,820L535,822L538,825L540,826L534,882L458,907L426,899L425,898L419,893L418,892L417,891L389,883L384,882L373,850L373,850L371,823L370,797L370,797L370,796L375,781L386,776L396,761Z","cx":482,"cy":800},"학온동":{"d":"M343,550L343,559L341,581L342,582L343,584L343,585L343,586L344,587L344,602L341,617L333,635L333,636L333,636L332,642L334,649L336,661L344,679L356,708L355,712L351,717L351,718L351,722L352,731L354,733L363,741L374,753L378,758L396,761L386,776L375,781L370,796L370,797L370,797L371,823L373,850L373,850L384,882L383,886L380,904L376,930L376,932L376,935L377,937L377,939L379,942L380,944L381,945L381,945L384,945L387,945L389,945L394,945L397,945L398,944L402,944L404,943L406,943L409,943L410,943L413,943L415,943L418,943L419,944L421,944L422,946L422,946L435,964L436,965L436,968L435,980L433,994L416,999L411,998L410,998L408,997L396,995L379,993L377,993L376,993L362,994L337,999L305,1000L283,997L269,992L236,958L236,955L228,928L222,922L182,895L180,894L177,891L175,887L173,883L168,858L166,845L158,792L162,779L164,777L164,777L165,776L166,774L166,771L160,762L154,754L145,745L135,734L135,719L124,688L119,677L121,670L124,662L126,661L127,659L129,658L132,658L133,657L135,655L134,648L128,638L126,636L117,625L112,623L109,623L106,625L100,622L100,563L100,557L105,522L106,474L103,450L109,421L123,395L132,400L138,403L147,410L150,414L180,408L181,401L186,396L203,397L231,396L241,396L242,395L243,395L243,395L255,385L263,395L262,449L265,479L267,484L284,517L285,519L286,519L288,520L292,522L300,526L321,538L343,550Z","cx":247,"cy":701},"소하2동":{"d":"M546,680L531,715L506,717L484,734L468,736L455,744L441,758L435,761L425,756L415,749L403,755L396,761L378,758L374,753L363,741L354,733L352,731L351,722L351,718L351,717L355,712L356,708L344,679L336,661L334,649L332,642L333,636L333,636L333,635L341,617L344,602L344,587L343,586L343,585L343,584L342,582L341,581L343,559L343,550L360,529L415,541L442,543L478,536L479,534L480,532L481,531L482,531L483,530L483,530L487,530L491,529L498,538L499,539L500,540L504,550L504,551L504,551L505,552L505,553L505,554L504,554L504,557L503,558L503,558L503,559L501,560L501,561L501,561L496,628L530,630L532,630L556,632L523,662L546,680Z","cx":430,"cy":644}},"lm":{"광명시청":[320,183,"철산3동"],"철산역":[356,204,"철산3동"],"광명사거리역":[243,168,"광명4동"],"KTX광명역":[497,842,"일직동"]}};
+const baseDong=()=>DN.includes(S.dong)?S.dong:'철산3동';
+function listFor(dn){if(dn==='광명시 전체')return DN;if(dn.endsWith(' 생활권'))return D.filter(d=>d.z===dn.replace(' 생활권','')).map(d=>d.n);return null}
+function selDongs(){const l=listFor(S.dong);return new Set(DN.includes(S.dong)?[S.dong]:(l&&S.dong!=='광명시 전체'?l:[]))}
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const f0=v=>Math.round(v).toLocaleString('ko-KR');
+const f1=v=>(Math.round(v*10)/10).toLocaleString('ko-KR');
+const f2=v=>(Math.round(v*100)/100).toLocaleString('ko-KR');
+/* 동 면적(근사): 단순화한 경계 도형으로 계산한 값이라 공식 면적과 다릅니다 */
+function areaKm2(d){const n=d.match(/-?\d+\.?\d*/g).map(Number);let a=0;for(let i=0;i<n.length;i+=2){const j=(i+2)%n.length;a+=n[i]*n[j+1]-n[j]*n[i+1]}const u=GEO.H/GEO.km;return Math.abs(a)/2/(u*u)}
+const AREA={};DN.forEach(n=>AREA[n]=areaKm2(GEO.dong[n].d));
+let CITY={};
+function calcCity(){CITY={up:CATS.map((c,i)=>DN.reduce((s,n)=>s+RD[n][i],0))};CITY.tot=CITY.up.reduce((a,b)=>a+b,0);CITY.pop=DN.reduce((s,n)=>s+POPD[n][0],0)}
+calcCity();
+const cache={};
+function raw(dn,up){
+  const i=CATS.indexOf(up),p=POPD[dn];
+  return {dn,up,shops:RD[dn][i],tot:RD[dn].reduce((a,b)=>a+b,0),pop:p[0],hh:p[1],male:p[2],fem:p[3],ag:p.slice(4),area:AREA[dn]};
+}
+function fin(o){
+  const cu=CITY.up[CATS.indexOf(o.up)],ag=o.ag;
+  o.per1000=o.shops/o.pop*1000; o.perAll=o.tot/o.pop*1000;
+  o.share=o.shops/(o.tot||1)*100;
+  o.lq=(o.shops/(o.tot||1))/(cu/CITY.tot);
+  o.dens=o.pop/o.area; o.shopKm=o.shops/o.area; o.totKm=o.tot/o.area;
+  o.old=ag.slice(6).reduce((a,b)=>a+b,0)/o.pop*100;
+  o.young=(ag[2]+ag[3])/o.pop*100;
+  o.kid=(ag[0]+ag[1])/o.pop*100;
+  o.hhs=o.pop/o.hh;
+  o.ag6=[ag[0]+ag[1],ag[2],ag[3],ag[4],ag[5],ag.slice(6).reduce((a,b)=>a+b,0)].map(v=>v/o.pop*100);
+  o.fp=o.fem/o.pop*100;
+  return o;
+}
+function M(dn,up){
+  const k=dn+'|'+up;if(cache[k])return cache[k];
+  const L0=listFor(dn);
+  if(L0){
+    const L=L0.map(n=>raw(n,up)),sum=a=>L.reduce((s,m)=>s+m[a],0);
+    return cache[k]=fin({dn,up,shops:sum('shops'),tot:sum('tot'),pop:sum('pop'),hh:sum('hh'),male:sum('male'),fem:sum('fem'),area:sum('area'),ag:L[0].ag.map((_,i)=>L.reduce((s,m)=>s+m.ag[i],0))});
+  }
+  return cache[k]=fin(raw(dn,up));
+}
+
+/* ---------- 차트 ---------- */
+function bars(items,o={}){
+  const mx=o.max||Math.max(...items.map(i=>i.v),1), fmt=o.fmt||f0;
+  return items.map(i=>`<div class="row ${i.sel?'sel':''}"><span>${i.l}</span><span class="t"><i style="width:${cl(i.v/mx*100,0,100)}%"></i></span><span class="n">${fmt(i.v)}${o.unit||''}</span></div>`).join('');
+}
+function donut(parts){
+  const tot=parts.reduce((s,p)=>s+p.v,0),R=52,C=2*Math.PI*R,cs=['var(--teal)','var(--amber)','var(--bad)','var(--good)'];let off=0;
+  const arcs=parts.map((p,i)=>{const len=p.v/tot*C,s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${cs[i]}" stroke-width="22" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=len;return s}).join('');
+  const lg=parts.map((p,i)=>`<div style="color:${cs[i]};font-weight:700">● ${p.l} <span style="color:var(--ink)">${f1(p.v/tot*100)}%</span></div>`).join('');
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 140 140" width="130" role="img" aria-label="비율 도넛 차트">${arcs}</svg><div style="font-size:13px">${lg}</div></div>`;
+}
+function radar(axes,series){
+  const S=120,cx=170,cy=165,n=axes.length,pt=(i,v)=>{const a=-Math.PI/2+i*2*Math.PI/n;return[cx+Math.cos(a)*S*v/100,cy+Math.sin(a)*S*v/100]};
+  let g='';[25,50,75,100].forEach(r=>{g+=`<polygon points="${axes.map((_,i)=>pt(i,r).join(',')).join(' ')}" fill="none" stroke="var(--line)"/>`});
+  axes.forEach((a,i)=>{const[x,y]=pt(i,100),[tx,ty]=pt(i,118);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/><text x="${tx}" y="${ty+4}" font-size="12" text-anchor="middle">${a}</text>`});
+  const cs=['var(--amber)','var(--teal)'];
+  const sv=series.map((s,j)=>`<polygon points="${s.v.map((v,i)=>pt(i,v).join(',')).join(' ')}" fill="${cs[j]}" fill-opacity=".18" stroke="${cs[j]}" stroke-width="2.5"/>`).join('');
+  const lg=series.map((s,j)=>`<span style="color:${cs[j]};font-weight:700;margin-right:12px">● ${s.n}</span>`).join('');
+  return `<div class="small">${lg}</div><svg viewBox="0 0 340 320" width="100%" style="max-width:380px" role="img" aria-label="진단 레이더 차트">${g}${sv}</svg>`;
+}
+function kpi(l,v,d,cls){return `<div class="card kpi c3"><div class="l">${l}</div><div class="v">${v}</div>${d?`<div class="d ${cls||''}">${d}</div>`:''}</div>`}
+
+/* ---------- 지도 ---------- */
+const MET={
+ shops:['업소 수','개',m=>m.shops,f0],
+ per1000:['인구 1천명당 업소 수','개',m=>m.per1000,f1],
+ lq:['업종 특화도(LQ)','',m=>m.lq,f2],
+ pop:['거주 인구','명',m=>m.pop,f0],
+ hh:['세대 수','세대',m=>m.hh,f0],
+ dens:['인구밀도(근사)','명/㎢',m=>m.dens,f0],
+ old:['60세 이상 비율','%',m=>m.old,f1],
+ young:['20~30대 비율','%',m=>m.young,f1],
+ hhs:['세대당 인구','명',m=>m.hhs,f2]};
+const PILL=Object.keys(MET);
+const pills=()=>`<div class="chips">${PILL.map(k=>`<button class="chip ${S.metric===k?'on':''}" data-metric="${k}">${MET[k][0]}</button>`).join('')}</div>`;
+function mapSVG(metric,up,h){
+  const g=MET[metric],vals=DN.map(n=>g[2](M(n,up))),mn=Math.min(...vals),mx=Math.max(...vals),ss=selDongs();
+  const paths=DN.map((n,i)=>{const t=(vals[i]-mn)/(mx-mn||1);return `<path data-dong="${n}" class="dp${ss.has(n)?' sel':''}" d="${GEO.dong[n].d}" fill="var(--teal)" fill-opacity="${(.1+.82*t).toFixed(2)}"><title>${n} · ${g[0]} ${g[3](vals[i])}${g[1]}</title></path>`}).join('');
+  const over=DN.filter(n=>ss.has(n)).map(n=>`<path class="selo" d="${GEO.dong[n].d}"/>`).join('');
+  const lab=DN.map(n=>`<text class="dl" x="${GEO.dong[n].cx}" y="${GEO.dong[n].cy+5}">${n.replace('동','')}</text>`).join('');
+  const lm=S.lm?Object.entries(GEO.lm).map(([n,v])=>`<g class="lmk"><path d="M${v[0]},${v[1]-10}l8,10l-8,10l-8,-10Z"/><text x="${v[0]+13}" y="${v[1]+5}">${n}(대략)</text></g>`).join(''):'';
+  const u=GEO.H/GEO.km;
+  const sb=`<g transform="translate(20,${GEO.H-26})"><rect width="${u.toFixed(0)}" height="6" fill="var(--ink)"/><text x="0" y="-5" class="sbt">1km</text></g><g transform="translate(${GEO.W-30},34)"><path d="M0,-18L8,6L0,0L-8,6Z" fill="var(--ink)"/><text y="22" class="sbt" text-anchor="middle">N</text></g>`;
+  return `<svg class="map" viewBox="-6 -6 ${GEO.W+12} ${GEO.H+12}" style="height:${h||600}px;width:auto;max-width:100%" role="img" aria-label="광명시 행정동 경계 지도, 색은 ${g[0]}">${paths}${over}${lab}${lm}${sb}</svg><div class="small">색이 진할수록 값이 큽니다(최소 ${g[3](mn)} ~ 최대 ${g[3](mx)}${g[1]}). 동 경계는 단순화한 도형입니다.</div>`;
+}
+function rank(metric,up,asc){
+  const g=MET[metric];return D.map(d=>({l:d.n,v:g[2](M(d.n,up)),sel:d.n===S.dong})).sort((a,b)=>asc?a.v-b.v:b.v-a.v);
+}
+const lmChip=()=>`<button class="chip ${S.lm?'on':''}" data-act="lm">주요 지점 표시(대략 위치)</button>`;
+const cur=()=>MET[S.metric];
+const srcLine=(a)=>`<p class="src">출처: ${a}</p>`;
+const SRC_S=`소상공인시장진흥공단 「상가(상권)정보」(공공데이터포털) ${SRC.shops} 기준`;
+const SRC_P=`행정안전부 「주민등록 인구 및 세대현황」·「행정동별 성/연령별 인구」(공공데이터포털) ${SRC.pop} 기준`;
+const SRC_C='위 자료로 이 사이트가 계산한 값입니다(공식 통계 아님)';
+
+/* ---------- 상태·메뉴 ---------- */
+const MENU=[
+ ['analysis','빅데이터 상권분석',[['simple','간단분석'],['detail','상세분석'],['theme','테마분석'],['location','입지분석'],['industry','업종분석'],['compete','경쟁분석'],['delivery','배달분석'],['status','상권지도'],['weather','창업기상도']]],
+ ['diagnose','내 가게 경영진단',[['bigdata','빅데이터 경영진단'],['startup','창업역량 자가진단'],['export','수출입역량 자가진단'],['digital','디지털수준 자가진단']]],
+ ['trend','상권·시장 트렌드',[['trend','트렌드 분석'],['sns','SNS 분석'],['festival','관광·축제정보'],['news','소상공인 뉴스'],['best','우수 소상공인'],['policy','소상공인 정책'],['support','지원사업 안내']]],
+ ['stats','소상공인 대시보드',[['main','주요 통계'],['sales','매출 통계'],['shops','업소 통계'],['pop','인구 통계'],['national','소상공인 통계(국가승인)']]],
+ ['gm','광명형 특화',[['circular','지역순환경제 지표'],['zones','생활권별 비교'],['gsupport','광명 지원사업']]],
+ ['guide','이용안내',[['terms','이용조건·출처·면책'],['intro','서비스 소개'],['data','기준 데이터'],['opendata','공공데이터 안내'],['notice','공지사항'],['qna','문의사항'],['manual','매뉴얼'],['sitemap','사이트맵']]]
+];
+const S={m:'analysis',s:'simple',dong:'철산3동',up:'음식',rs:{dong:'철산3동',up:'음식'},lm:true,metric:'shops',theme:'주거 밀집',radius:500,w:{pop:35,comp:30,hh:20,age:15},zone:['철산','하안'],diag:null,ans:{},res:{}};
+const $=s=>document.querySelector(s);
+function go(m,s){S.m=m;S.s=s;try{history.replaceState(null,'','#'+m+'-'+s)}catch(e){}render();window.scrollTo(0,0)}
+function ctrl(opts={}){
+  if(opts.noAll&&!DN.includes(S.dong))S.dong=baseDong();
+  const o=n=>`<option ${S.dong===n?'selected':''}>${n}</option>`;
+  const dsel=opts.noAll?DN.map(o).join(''):o('광명시 전체')+`<optgroup label="생활권(제작자 임의 구분)">${ZONES.map(z=>o(z+' 생활권')).join('')}</optgroup><optgroup label="행정동">${DN.map(o).join('')}</optgroup>`;
+  return `<div class="bar">
+   <label>${opts.noAll?'행정동':'영역·행정동'}<select data-set="dong">${dsel}</select></label>
+   ${opts.noUp?'':`<label>업종<select data-set="up">${UP.map(n=>`<option ${S.up===n?'selected':''}>${n}</option>`).join('')}</select></label>`}
+   ${opts.extra||''}
+   <span class="small" style="margin-left:auto">선택: ${S.dong} · ${opts.noUp?'전체 업종':S.up}</span></div>`;
+}
+function head(t,l){return `<h1>${t}</h1><p class="lead">${l}</p>`}
+const LINK=(h,t,d)=>`<div class="card c4"><a class="lnk" href="${h}" target="_blank" rel="noopener"><b>${t}</b><span class="small">${d}</span></a></div>`;
+const OFF='<a href="https://bigdata.sbiz.or.kr" target="_blank" rel="noopener">소상공인365(공식 사이트)</a>';
+/* 공공데이터로 확인되지 않아 싣지 않은 화면 */
+function NA(title,lead,what,where){
+  return head(title,lead)+`<div class="card na"><p><span class="pill p-mute">공공데이터 미제공</span></p>
+  <p>이 화면에 필요한 <b>${what}</b>은(는) 이 사이트가 확인한 무료 공공데이터에 없어 <b>수치를 싣지 않았습니다.</b> 임의로 만든 값을 보여 드리지 않기 위해서입니다.</p>
+  <p>이 항목은 ${OFF}에서 확인하세요.${where?' '+where:''}</p></div>`;
+}
+const ag6L=['10대 이하','20대','30대','40대','50대','60대 이상'];
+
+/* ---------- 화면: 상권분석 ---------- */
+const V={};
+V['analysis-simple']=()=>{
+  const rs=S.rs,m=M(rs.dong,rs.up),all=M('광명시 전체',rs.up),stale=(rs.dong!==S.dong||rs.up!==S.up);
+  const ratio=m.per1000/all.per1000;
+  const o=n=>`<option ${S.dong===n?'selected':''}>${n}</option>`;
+  const panel=`<div class="card c3 panel"><h2>간단분석</h2>
+    <div class="pl">영역·행정동 선택</div>
+    <select data-set="dong" style="width:100%">${o('광명시 전체')}<optgroup label="생활권(제작자 임의 구분)">${ZONES.map(z=>o(z+' 생활권')).join('')}</optgroup><optgroup label="행정동">${DN.map(o).join('')}</optgroup></select>
+    <div class="pl">업종 선택</div>
+    <div class="tiles">${UP.map(u=>`<button class="tile ${S.up===u?'on':''}" data-up="${u}">${u}</button>`).join('')}</div>
+    <button class="btn" style="width:100%;margin-top:14px" data-act="run">분석하기</button>
+    <p class="small" style="margin:8px 0 0">지도의 동을 눌러도 선택됩니다.</p></div>`;
+  const rk=rank(S.metric,S.up),g=cur();
+  const mapcard=`<div class="card c9"><h2>동별 지도 <span class="small">(${g[0]} · ${S.up})</span></h2>${pills()}${lmChip()}
+    <div class="mapwrap"><div>${mapSVG(S.metric,S.up,640)}</div><div class="mapside"><h3>${g[0]} 순위</h3>${bars(rk.slice(0,10),{fmt:g[3]})}</div></div></div>`;
+  return head('간단분석','왼쪽에서 영역과 업종을 고르고 분석하기를 누르면 아래에 결과가 나옵니다.')+`<div class="grid">${panel}${mapcard}</div>
+  ${stale?`<p class="note" style="margin-top:14px">선택이 바뀌었습니다. 분석하기를 누르면 ${S.dong} · ${S.up} 결과로 바뀝니다. 아래는 이전 선택(${rs.dong} · ${rs.up}) 결과입니다.</p>`:''}
+  <h2 style="margin:20px 0 10px">${rs.dong} · ${rs.up} 분석 결과</h2><div class="grid">
+   ${kpi('업소 수',f0(m.shops)+'개','전체 업종 '+f0(m.tot)+'개 중 '+f1(m.share)+'%')}
+   ${kpi('인구 1천명당 업소 수',f1(m.per1000)+'개','광명시 평균 '+f1(all.per1000)+'개')}
+   ${kpi('거주 인구',f0(m.pop)+'명','세대 '+f0(m.hh)+' · 세대당 '+f2(m.hhs)+'명')}
+   ${kpi('업종 특화도(LQ)',f2(m.lq),m.lq>1.2?'광명시 평균보다 몰려 있음':m.lq<.8?'광명시 평균보다 적음':'광명시 평균 수준')}
+   <div class="card c6"><h2>광명시 평균 대비 업소 밀집</h2>
+     <div><b style="font-size:22px">${f2(ratio)}배</b> <span class="small">인구 1천명당 ${rs.up} 업소 수를 광명시 평균과 비교한 값</span></div>
+     <div class="meter2"><i style="left:${cl(ratio*50,0,100)}%"></i><u></u></div><div class="small" style="display:flex;justify-content:space-between"><span>0배</span><span>평균(1배)</span><span>2배 이상</span></div>
+     <p class="small">업소 수와 인구만으로 계산한 참고 값입니다. 매출·경쟁 강도를 뜻하지 않습니다.</p>
+     <h2 style="margin-top:18px">업종별 업소 수 (${rs.dong})</h2>${bars(UP.map(u=>({l:u,v:M(rs.dong,u).shops,sel:u===rs.up})))}</div>
+   <div class="card c6"><h2>연령 구조 (${rs.dong} 주민등록 인구)</h2>${bars(ag6L.map((l,i)=>({l,v:m.ag6[i]})),{fmt:f1,unit:'%'})}
+     <h2 style="margin-top:14px">한 줄 요약</h2><p style="margin:0">${rs.dong}에는 ${rs.up} 업소가 ${f0(m.shops)}개 있고, 인구 1천명당 ${f1(m.per1000)}개로 광명시 평균(${f1(all.per1000)}개)의 ${f2(ratio)}배입니다. 60세 이상 주민이 ${f1(m.old)}%, 20~30대가 ${f1(m.young)}%입니다.</p></div>
+  </div>
+  <p class="small">매출, 유동인구, 개·폐업률은 공공데이터로 확인되지 않아 싣지 않았습니다. ${OFF}에서 확인하세요.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-detail']=()=>{
+  const m=M(S.dong,S.up);
+  return head('상세분석','업소, 인구, 지역 특성을 나누어 자세히 봅니다.')+ctrl()+`<div class="grid">
+   <div class="card c4"><h2>연령별 인구 비중</h2>${bars(ag6L.map((l,i)=>({l,v:m.ag6[i]})),{fmt:f1,unit:'%'})}</div>
+   <div class="card c4"><h2>성별 인구 비중</h2>${donut([{l:'여성',v:m.fem},{l:'남성',v:m.male}])}</div>
+   <div class="card c4"><h2>업소 현황 (${S.dong})</h2>${bars(UP.map(u=>({l:u,v:M(S.dong,u).shops,sel:u===S.up})))}</div>
+   <div class="card c6"><h2>지역 특성</h2>
+     <table><tr><td>거주 인구</td><td>${f0(m.pop)}명</td></tr><tr><td>세대 수</td><td>${f0(m.hh)}세대</td></tr><tr><td>세대당 인구</td><td>${f2(m.hhs)}명</td></tr><tr><td>면적(근사)</td><td>${f1(m.area)}㎢</td></tr><tr><td>인구밀도(근사)</td><td>${f0(m.dens)}명/㎢</td></tr><tr><td>전체 업종 업소 수</td><td>${f0(m.tot)}개</td></tr><tr><td>${S.up} 업소 수 · 구성비</td><td>${f0(m.shops)}개 · ${f1(m.share)}%</td></tr></table></div>
+   <div class="card c6"><h2>공공데이터 미제공 항목</h2><p style="margin:0"><span class="pill p-mute">미제공</span> 요일·시간대·연령·성별 매출 비중, 평균 임대료, 일 유동인구는 공공데이터로 확인되지 않아 싣지 않았습니다. ${OFF}에서 확인하세요.</p></div></div>
+   <p class="small">면적과 인구밀도는 단순화한 경계 도형으로 계산한 근사값입니다.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-theme']=()=>{
+  const TH={'주거 밀집':['인구밀도(명/㎢)',m=>m.dens,f0],'청년 거주(20~30대)':['20~30대 비율(%)',m=>m.young,f1],'고령 거주(60세 이상)':['60세 이상 비율(%)',m=>m.old,f1],'상업 밀집':['면적당 전체 업소 수(개/㎢)',m=>m.totKm,f0],'가족 거주(10대 이하)':['10대 이하 비율(%)',m=>m.kid,f1]};
+  const t=TH[S.theme],rows=D.map(d=>({n:d.n,v:t[1](M(d.n,S.up))})).sort((a,b)=>b.v-a.v).slice(0,6);
+  return head('테마분석','동의 성격을 하나 고르면, 그 성격이 가장 뚜렷한 동을 공공데이터 수치 순서대로 보여줍니다.')+ctrl({noAll:true})+`
+  <div class="chips">${Object.keys(TH).map(k=>`<button class="chip ${S.theme===k?'on':''}" data-theme="${k}">${k}</button>`).join('')}</div>
+  <div class="grid"><div class="card c6"><h2>'${S.theme}' 수치가 높은 동 TOP 6</h2><p class="small" style="margin-top:-6px">기준: ${t[0]}</p>${bars(rows.map(r=>({l:r.n,v:r.v,sel:r.n===S.dong})),{fmt:t[2]})}</div>
+  <div class="card c6 scroll"><h2>${S.up} 업종 비교</h2><table><tr><th>동</th><th>업소수</th><th>1천명당</th><th>LQ</th></tr>${rows.map(r=>{const m=M(r.n,S.up);return`<tr><td>${r.n}</td><td>${f0(m.shops)}</td><td>${f1(m.per1000)}</td><td>${f2(m.lq)}</td></tr>`}).join('')}</table></div></div>
+  <p class="small">소상공인365의 '테마'(관광, 대학가 등)는 유동인구·카드 데이터 기반이라 여기서는 주민등록 인구와 업소 수로 만든 성격 구분으로 바꾸었습니다.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-location']=()=>{
+  const w=S.w;const sl=(k,l)=>`<label>${l} ${w[k]}%<input type="range" min="0" max="80" step="5" value="${w[k]}" data-w="${k}"></label>`;
+  const all=D.map(d=>({n:d.n,m:M(d.n,S.up)})),mx=f=>Math.max(...all.map(x=>f(x.m)));
+  const mp=mx(m=>m.pop),mc=mx(m=>m.per1000),mh=mx(m=>m.hh),ma=mx(m=>m.young+ (m.ag6[3]+m.ag6[4]));
+  const L=all.map(x=>{const m=x.m,pop=m.pop/mp*100,comp=100-m.per1000/mc*100,hh=m.hh/mh*100,age=(m.young+m.ag6[3]+m.ag6[4])/ma*100;
+    const tot=(pop*w.pop+comp*w.comp+hh*w.hh+age*w.age)/((w.pop+w.comp+w.hh+w.age)||1);return{n:x.n,pop,comp,hh,age,tot}}).sort((a,b)=>b.tot-a.tot);
+  return head('입지분석','거주 인구, 경쟁 여유, 세대 수, 주 소비 연령 중 무엇을 중요하게 볼지 정하면 점수가 다시 계산됩니다.')+
+  `<div class="bar"><label>업종<select data-set="up">${UP.map(n=>`<option ${S.up===n?'selected':''}>${n}</option>`).join('')}</select></label>${sl('pop','거주 인구')}${sl('comp','경쟁 여유')}${sl('hh','세대 수')}${sl('age','20~50대 비중')}</div>
+  <div class="grid"><div class="card c5"><h2>상대 점수 순위 (${S.up})</h2>${bars(L.map(x=>({l:x.n,v:x.tot,sel:x.n===S.dong})),{fmt:f0,unit:'점',max:100})}</div>
+  <div class="card c7 scroll"><h2>항목별 점수</h2><table><tr><th>순위</th><th>동</th><th>거주 인구</th><th>경쟁 여유</th><th>세대 수</th><th>20~50대</th><th>종합</th></tr>${L.slice(0,10).map((x,i)=>`<tr><td>${i+1}</td><td>${x.n}</td><td>${f0(x.pop)}</td><td>${f0(x.comp)}</td><td>${f0(x.hh)}</td><td>${f0(x.age)}</td><td><b>${f0(x.tot)}</b></td></tr>`).join('')}</table></div></div>
+  <p class="note" style="margin-top:14px">점수는 19개 동끼리의 상대 비교(최대=100)이며 <b>창업 성공 가능성이 아닙니다.</b> 유동인구·매출은 공공데이터로 확인되지 않아 반영하지 않았습니다. '경쟁 여유'는 인구 1천명당 같은 업종 업소 수가 적을수록 높게 계산합니다.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-industry']=()=>{
+  return head('업종분석','한 업종이 광명시 어느 동에 몰려 있는지, 한 동에서는 어떤 업종이 많은지 봅니다.')+ctrl()+`<div class="grid">
+   <div class="card c6"><h2>${S.up} · 동별 업소 수</h2>${bars(rank('shops',S.up).slice(0,10))}<p class="small">상위 10개 동</p></div>
+   <div class="card c6 scroll"><h2>${S.dong} · 업종별 비교</h2><table><tr><th>업종</th><th>업소수</th><th>구성비</th><th>1천명당</th><th>LQ</th></tr>${UP.map(u=>{const x=M(S.dong,u);return`<tr class="${u===S.up?'sel':''}"><td>${u}</td><td>${f0(x.shops)}</td><td>${f1(x.share)}%</td><td>${f1(x.per1000)}</td><td>${f2(x.lq)}</td></tr>`}).join('')}</table>
+   <p class="small">LQ는 이 동의 업종 구성비를 광명시 전체 구성비로 나눈 값입니다. 1보다 크면 광명시 평균보다 그 업종이 많이 몰려 있습니다.</p></div></div>
+   <p class="small">업종별 매출·매출 추이는 공공데이터로 확인되지 않아 싣지 않았습니다. ${OFF}에서 확인하세요.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-compete']=()=>{
+  const dn=baseDong(),m=M(dn,S.up),all=M('광명시 전체',S.up),r=S.radius/1000,exp=m.shopKm*Math.PI*r*r;
+  const rb=[300,500,1000].map(x=>`<button class="chip ${S.radius===x?'on':''}" data-radius="${x}">반경 ${x}m</button>`).join('');
+  return head('경쟁분석','같은 동에 같은 업종이 얼마나 모여 있는지 업소 밀도로 봅니다.')+ctrl({noAll:true})+`
+  <div class="chips">${rb}</div><div class="grid">
+   ${kpi(dn+' '+S.up+' 업소',f0(m.shops)+'개','')}${kpi('업소 밀도',f1(m.shopKm)+'개/㎢','광명시 평균 '+f1(all.shopKm)+'개/㎢')}${kpi('반경 '+S.radius+'m 평균 업소 수(가정)',f1(exp)+'개','동 안에 고르게 있다고 가정')}${kpi('인구 1천명당',f1(m.per1000)+'개','광명시 평균 '+f1(all.per1000)+'개')}
+   <div class="card c12"><h2>이렇게 보세요</h2><ul class="t"><li>${dn}의 ${S.up} 업소는 면적 1㎢당 약 ${f1(m.shopKm)}개로, 광명시 평균(${f1(all.shopKm)}개/㎢)의 ${f2(m.shopKm/all.shopKm)}배입니다.</li><li>반경 ${S.radius}m 원의 넓이는 약 ${f2(Math.PI*r*r)}㎢이며, 업소가 동 안에 고르게 있다고 가정하면 평균 ${f1(exp)}개 정도입니다. <b>실제 위치별 개수는 다를 수 있습니다.</b></li><li>특정 주소 주변의 정확한 업소 수는 상가정보의 좌표를 따로 분석하거나 ${OFF}에서 확인해야 합니다.</li></ul></div></div>
+   <p class="small">목표 매출 대비, 경쟁 강도 점수는 매출 데이터가 없어 제공하지 않습니다. 면적은 단순화한 경계로 계산한 근사값입니다.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['analysis-delivery']=()=>NA('배달분석','배달 비중과 시간대를 확인하는 화면입니다.','배달 주문·매출 데이터','(배달 데이터는 배달 플랫폼·카드사 보유 자료입니다)');
+V['analysis-status']=()=>{
+  const m=M(S.dong,S.up),rk=rank(S.metric,S.up),g=cur();
+  return head('상권지도','광명시 19개 동의 경계를 지도에서 비교합니다. 지표를 고르고 동을 눌러 보세요.')+ctrl()+pills()+lmChip()+`
+  <div class="grid"><div class="card c6" style="text-align:center">${mapSVG(S.metric,S.up,680)}</div>
+  <div class="card c6"><h2>${S.dong} · ${S.up}</h2><table><tr><td>업소 수</td><td>${f0(m.shops)}개</td></tr><tr><td>인구 1천명당 업소 수</td><td>${f1(m.per1000)}개</td></tr><tr><td>거주 인구 · 세대</td><td>${f0(m.pop)}명 · ${f0(m.hh)}세대</td></tr><tr><td>60세 이상 · 20~30대 비율</td><td>${f1(m.old)}% · ${f1(m.young)}%</td></tr><tr><td>업종 특화도(LQ)</td><td>${f2(m.lq)}</td></tr></table>
+  <h2 style="margin-top:16px">${g[0]} 순위</h2>${bars(rk.slice(0,10),{fmt:g[3]})}
+  <p class="small">동 경계는 통계청 SGIS 행정동 경계(${SRC.geo}판, vuski/admdongkor 보정본)를 단순화한 것으로 실제 경계와 다를 수 있습니다. 역·시청 위치는 대략 위치입니다.</p></div></div>${srcLine(SRC_S+' · '+SRC_P+' · 경계: 통계청 SGIS 행정동 경계 · '+SRC_C)}`;
+};
+V['analysis-weather']=()=>{
+  const ZL=ZONES.map(z=>z+' 생활권'),vals=UP.map(u=>ZL.map(z=>M(z,u).per1000)),mx=Math.max(...vals.flat());
+  return head('창업기상도','소상공인365의 창업기상도는 매출·폐업 흐름으로 만든 종합 지표입니다. 그 자료가 없어 같은 이름의 판단은 제공하지 않고, 대신 생활권별 업소 분포를 보여 드립니다.')+`<div class="card na"><p><span class="pill p-mute">공공데이터 미제공</span> 창업 적합도 판단에 필요한 매출·개폐업 데이터가 없어 '맑음/흐림' 평가는 하지 않습니다. ${OFF}의 창업기상도를 확인하세요.</p></div>
+  <div class="card scroll" style="margin-top:14px"><h2>참고: 생활권 × 업종 인구 1천명당 업소 수</h2><table><tr><th>업종</th>${ZONES.map(z=>`<th>${z}</th>`).join('')}</tr>${UP.map((u,i)=>`<tr><td>${u}</td>${vals[i].map(v=>`<td style="background:color-mix(in srgb,var(--teal) ${Math.round(v/mx*55)}%,var(--card))">${f1(v)}</td>`).join('')}</tr>`).join('')}</table>
+  <p class="small">숫자가 클수록 주민 수 대비 업소가 많다는 뜻일 뿐, 창업하기 좋거나 나쁘다는 뜻이 아닙니다. 생활권 구분은 제작자가 임의로 묶은 것입니다.</p></div>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+
+/* ---------- 화면: 경영진단 ---------- */
+V['diagnose-bigdata']=()=>{
+  const f=S.diag||{sales:2400,food:35,labor:500,rent:250,other:150,visits:1700};
+  const inp=(id,l,v,st)=>`<label>${l}<input type="number" id="${id}" value="${v}" min="0" step="${st||10}"></label>`;
+  let out='';
+  if(S.diag){
+    const dn=baseDong(),m=M(dn,S.up),food=f.sales*f.food/100,pf=f.sales-food-f.labor-f.rent-f.other,mg=pf/f.sales*100,tk=f.sales*10000/(f.visits||1);
+    const pc=v=>v/f.sales*100;
+    out=`<div class="grid" style="margin-top:14px">${kpi('월 영업이익 추정',f0(pf)+'만원','',pf>=0?'up':'dn')}${kpi('영업이익률',f1(mg)+'%','입력값으로 계산',mg>=0?'up':'dn')}${kpi('고객 1인당 매출',f0(tk)+'원','')}${kpi('손익분기 매출 추정',f0((f.labor+f.rent+f.other)/Math.max(.01,1-f.food/100))+'만원','고정비÷(1-재료비율)')}
+    <div class="card c6"><h2>매출 대비 비용 구조</h2>${bars([{l:'재료비',v:pc(food)},{l:'인건비',v:pc(f.labor)},{l:'임대료',v:pc(f.rent)},{l:'기타경비',v:pc(f.other)},{l:'영업이익',v:Math.max(0,mg)}],{fmt:f1,unit:'%',max:100})}</div>
+    <div class="card c6"><h2>내 가게가 있는 동 (${dn} · ${S.up})</h2><table><tr><td>같은 업종 업소 수</td><td>${f0(m.shops)}개</td></tr><tr><td>인구 1천명당</td><td>${f1(m.per1000)}개 (광명시 평균 ${f1(M('광명시 전체',S.up).per1000)}개)</td></tr><tr><td>거주 인구 · 세대</td><td>${f0(m.pop)}명 · ${f0(m.hh)}세대</td></tr></table>
+    <p class="small" style="margin-top:10px">동종 업소의 평균 매출·이익률과 비교하는 기능은 공공데이터가 없어 제공하지 않습니다. 업종 평균은 ${OFF} 또는 통계청 서비스업조사 등 공식 자료에서 확인하세요.</p></div></div>`;
+  }
+  return head('빅데이터 경영진단','내 가게의 월 숫자를 넣으면 이익 구조를 계산해 주고, 내 동의 업소·인구 현황을 함께 보여줍니다.')+ctrl({noAll:true})+`<div class="card"><h2>내 가게 월 숫자 입력</h2><div class="bar" style="border:0;padding:0;margin:0">${inp('f_sales','월 매출(만원)',f.sales,50)}${inp('f_food','재료비율(%)',f.food,1)}${inp('f_labor','인건비(만원)',f.labor)}${inp('f_rent','임대료(만원)',f.rent)}${inp('f_other','기타경비(만원)',f.other)}${inp('f_visits','월 방문 고객 수(명)',f.visits,10)}<button class="btn" data-act="diag">진단하기</button></div><p class="small" style="margin:8px 0 0">입력한 값은 이 화면 안에서만 계산되며 어디로도 전송·저장되지 않습니다. 예시로 채워진 숫자는 실제 데이터가 아닙니다.</p></div>${out}${srcLine(SRC_S+' · '+SRC_P)}`;
+};
+const QS={
+ startup:{t:'창업역량 자가진단',l:'창업 전이나 초기 운영 중에 준비 상태를 점검합니다.',c:['시장 이해','재무 준비','운영 역량','의지·네트워크'],q:['목표 고객과 상권의 특성을 직접 조사했다',0,'경쟁 업소 3곳 이상의 가격과 상품을 비교했다',0,'창업 자금과 6개월치 운영자금을 확보했다',1,'월 손익분기점 매출을 계산해 봤다',1,'인력, 재고, 위생 등 운영 절차를 정리했다',2,'해당 업종의 경험이 있거나 교육을 이수했다',2,'도움받을 가족·동료·지인 네트워크가 있다',3,'위기 때 대응 계획(예비비, 대출, 폐업 기준)이 있다',3]},
+ export:{t:'수출입역량 자가진단',l:'해외 판매나 수입을 시작하기 전에 준비 상태를 점검합니다.',c:['시장 정보','법규·물류','마케팅·결제'],q:['대상 국가의 수요를 조사했다',0,'경쟁 상품과 가격을 비교했다',0,'통관과 인증에 필요한 서류를 알고 있다',1,'운송과 보관 방법, 비용을 계산했다',1,'해외 판매 채널(플랫폼, 바이어)을 확보했다',2,'외화 결제와 환율 위험을 관리할 방법이 있다',2,'외국어 상품 설명 자료가 있다',2,'수출입 업무를 맡을 담당자가 있다',1]},
+ digital:{t:'디지털수준 자가진단',l:'온라인 판매, 마케팅, 업무 자동화 수준을 점검합니다.',c:['온라인 판매','온라인 마케팅','운영 자동화'],q:['포털 지도에 가게 정보가 등록돼 있다',0,'온라인 주문이나 예약을 받을 수 있다',0,'SNS 계정을 주 1회 이상 운영한다',1,'고객 후기를 확인하고 답글을 단다',1,'POS나 키오스크로 매출이 자동 기록된다',2,'재고와 매출을 엑셀이나 앱으로 관리한다',2,'간편결제와 지역화폐 결제가 가능하다',0,'AI 도구를 업무에 써 본 적이 있다',2]}
+};
+['startup','export','digital'].forEach(k=>V['diagnose-'+k]=()=>{
+  const Q=QS[k],items=[];for(let i=0;i<Q.q.length;i+=2)items.push([Q.q[i],Q.q[i+1]]);
+  const r=S.res[k],a=S.ans[k]||{};
+  let out='';
+  if(r){const tot=r.cs.reduce((s,v)=>s+v.v,0)/r.cs.length,gr=tot>=80?['우수','p-good']:tot>=60?['양호','p-warn']:tot>=40?['보완 필요','p-bad']:['집중 보완','p-bad'],lo=r.cs.reduce((m,x)=>x.v<m.v?x:m);
+    out=`<div class="grid" style="margin-top:14px"><div class="card c5"><h2>종합 결과</h2><div><span class="pill ${gr[1]}">${gr[0]}</span> <b style="font-size:28px">${f0(tot)}점</b></div>${r.cs.map(c=>bars([{l:c.l,v:c.v}],{fmt:f0,unit:'점',max:100})).join('')}</div>
+    <div class="card c7"><h2>다음에 할 일</h2><p><b>${lo.l}</b> 영역이 가장 낮습니다(${f0(lo.v)}점). 이 영역의 체크 항목 중 '아니다'에 가까운 것부터 하나씩 채워 가세요.</p><p class="small">이 자가진단은 이 사이트가 만든 간단한 점검표이며 공식 진단·평가가 아닙니다. 합격·불합격을 가르지 않고 답변은 저장되지 않습니다.</p></div></div>`;}
+  return head(Q.t,Q.l)+`<div class="card">${items.map((it,i)=>`<div class="q"><p>${i+1}. ${it[0]}</p><div class="opts">${['전혀 아니다','아니다','보통이다','그렇다','매우 그렇다'].map((o,j)=>`<label><input type="radio" name="${k}${i}" value="${j+1}" ${a[i]===j+1?'checked':''}>${o}</label>`).join('')}</div></div>`).join('')}
+  <p><button class="btn" data-act="quiz" data-k="${k}">결과 보기</button> <span class="small" id="qmsg"></span></p></div>${out}`;
+});
+
+/* ---------- 화면: 트렌드 ---------- */
+V['trend-trend']=()=>NA('트렌드 분석','관심이 늘고 있는 업종 키워드의 흐름을 보는 화면입니다.','검색·소비 트렌드 데이터','(대안: 네이버 데이터랩, 구글 트렌드 같은 공식 도구)');
+V['trend-sns']=()=>NA('SNS 분석','동네·업종에 대한 SNS 언급량과 분위기를 보는 화면입니다.','SNS 수집·분석 데이터','');
+V['trend-festival']=()=>{
+  const P=[['광명동굴','관광객이 오가는 곳 주변은 카페·식당·기념품 업종을 생각해 볼 수 있습니다.'],['광명전통시장','시장 상인과 연계한 먹거리, 지역화폐 연계 행사를 생각해 볼 수 있습니다.'],['광명업사이클아트센터','체험·교육 프로그램 이용객 대상 상품을 생각해 볼 수 있습니다.'],['광명역 일대','철도·대형 상업시설 이용객 대상 업종을 생각해 볼 수 있습니다.'],['철산 상업지구','저녁·주말 방문객 대상 음식·여가 업종을 생각해 볼 수 있습니다.']];
+  return head('관광·축제정보','광명의 대표 방문지를 업종 아이디어와 연결해 봅니다.')+`<p class="note">아래는 제작자의 일반적인 활용 아이디어이며 방문객 수 등 통계에 근거한 것이 아닙니다. 행사 일정·운영 정보는 광명시 공식 공고에서 확인하세요.</p><div class="grid">${P.map(p=>`<div class="card c4"><h2>${p[0]}</h2><p style="margin:0">${p[1]}</p></div>`).join('')}<div class="card c4"><h2>일정 확인</h2><a class="lnk" href="https://www.gm.go.kr" target="_blank" rel="noopener"><b>광명시청 바로가기</b><span class="small">행사·축제 일정 공고</span></a></div></div>`;
+};
+V['trend-news']=()=>head('소상공인 뉴스','뉴스 본문은 저작권 때문에 담지 않고, 공식 소식 창구로 연결합니다.')+`<div class="grid">${LINK('https://bigdata.sbiz.or.kr','소상공인365 뉴스','소상공인 관련 최신 소식')}${LINK('https://www.semas.or.kr','소상공인시장진흥공단','공단 공지와 사업 소식')}${LINK('https://www.gm.go.kr','광명시청','시정 소식과 공고')}</div>`;
+V['trend-best']=()=>head('우수 소상공인','광명시 우수 소상공인 사례를 소개하는 자리입니다.')+`<p class="note">아직 등록된 사례가 없습니다. 실제 사례는 선정 기관의 공개 자료와 당사자 동의를 확인한 뒤 채워 주세요.</p><div class="grid">${LINK('https://www.semas.or.kr','소상공인시장진흥공단 우수 사례','전국 우수 소상공인 소개')}</div>`;
+const SUP=[
+ ['소상공인 정책자금','국가','융자','창업·성장·위기','https://ols.semas.or.kr','대출 한도, 금리, 신청 가능 업종은 공고별로 달라 확인 필요'],
+ ['소상공인24','국가','통합 신청창구','전 단계','https://www.sbiz24.kr','지원사업 검색과 온라인 신청'],
+ ['경영개선 컨설팅·교육','국가','컨설팅','성장','https://www.semas.or.kr','신청 기간과 선정 방식 확인 필요'],
+ ['지역신용보증','경기도','보증','창업·성장','https://www.gcgf.or.kr','보증 한도와 조건은 상담 후 안내'],
+ ['경기도 소상공인 지원 공고','경기도','공고 모음','전 단계','https://www.gg.go.kr','사업별 대상과 일정 확인 필요'],
+ ['광명시 소상공인 지원 공고','광명시','공고 모음','전 단계','https://www.gm.go.kr','광명시 고시·공고 게시판 확인'],
+ ['지역화폐(광명사랑화폐) 가맹','광명시','지역 소비 연계','전 단계','https://www.gm.go.kr','가맹 조건과 수수료는 시 공지 확인'],
+ ['전통시장·상점가 활성화','광명시','환경 개선','성장','https://www.gm.go.kr','대상 시장과 공모 일정 확인 필요']];
+function supportView(title,lead){
+  const fs=['전체','국가','경기도','광명시'],f=S.sup||'전체',rows=SUP.filter(s=>f==='전체'||s[1]===f);
+  return head(title,lead)+`<p class="note">사업명과 주관 기관 중심의 <b>안내 목록</b>이며 최신·정확함을 보증하지 않습니다. 사업이 없어졌거나 조건이 바뀌었을 수 있으니 금액, 기간, 자격은 반드시 링크의 <b>공식 공고</b>에서 확인하세요. 이 사이트는 신청을 대행하지 않습니다.</p><div class="chips">${fs.map(x=>`<button class="chip ${f===x?'on':''}" data-sup="${x}">${x}</button>`).join('')}</div>
+  <div class="card scroll"><table><tr><th>사업</th><th>주체</th><th>유형</th><th>단계</th><th>확인할 것</th><th>공식 링크</th></tr>${rows.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td><td style="white-space:normal;text-align:left">${s[5]}</td><td><a href="${s[4]}" target="_blank" rel="noopener">열기</a></td></tr>`).join('')}</table></div>`;
+}
+V['trend-policy']=()=>supportView('소상공인 정책','국가, 경기도, 광명시 단위의 소상공인 정책 창구를 한곳에 모았습니다.');
+V['trend-support']=()=>supportView('지원사업 안내','내 단계에 맞는 지원사업을 찾는 출발점입니다.');
+V['gm-gsupport']=()=>supportView('광명 지원사업','광명시 소상공인이 먼저 확인할 지원사업 창구 목록입니다.');
+
+/* ---------- 화면: 대시보드 ---------- */
+V['stats-main']=()=>{
+  const t=M('광명시 전체','음식'),rows=D.map(d=>{const m=M(d.n,'음식');return{n:d.n,z:d.z,sh:m.tot,pop:m.pop,pk:m.perAll}}).sort((a,b)=>b.sh-a.sh);
+  return head('주요 통계','광명시 소상공인 업소와 인구 현황을 한눈에 봅니다.')+`<div class="grid">${kpi('전체 업소 수',f0(t.tot)+'개',SRC.shops+' 기준')}${kpi('거주 인구',f0(t.pop)+'명',SRC.pop+' 기준')}${kpi('세대 수',f0(t.hh)+'세대','')}${kpi('인구 1천명당 업소',f1(t.perAll)+'개','')}
+  <div class="card c6"><h2>업종별 업소 수</h2>${bars(UP.map(u=>({l:u,v:M('광명시 전체',u).shops})))}</div>
+  <div class="card c6 scroll"><h2>동별 업소 수 TOP 8</h2><table><tr><th>동</th><th>생활권</th><th>업소수</th><th>인구</th><th>1천명당</th></tr>${rows.slice(0,8).map(r=>`<tr><td>${r.n}</td><td>${r.z}</td><td>${f0(r.sh)}</td><td>${f0(r.pop)}</td><td>${f1(r.pk)}</td></tr>`).join('')}</table></div></div>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+V['stats-sales']=()=>NA('매출 통계','업종별, 동별 매출 수준과 흐름을 보는 화면입니다.','매출 통계','(카드 매출 등은 카드사·공공기관이 보유한 자료이며 무료 공공 API로 확인되지 않았습니다)');
+V['stats-shops']=()=>head('업소 통계','업소 수와 인구 대비 분포입니다.')+ctrl({noAll:true})+`<div class="grid"><div class="card c6"><h2>${S.up} 동별 업소 수 TOP 8</h2>${bars(rank('shops',S.up).slice(0,8),{unit:'개'})}</div><div class="card c6"><h2>${S.up} 인구 1천명당 업소 수 TOP 8</h2>${bars(rank('per1000',S.up).slice(0,8),{fmt:f1,unit:'개'})}</div><div class="card c12 scroll"><h2>업종별 업소 수 (광명시)</h2><table><tr><th>업종</th><th>업소수</th><th>구성비</th><th>인구 1천명당</th></tr>${UP.map(u=>{const m=M('광명시 전체',u);return`<tr><td>${u}</td><td>${f0(m.shops)}</td><td>${f1(m.share)}%</td><td>${f1(m.per1000)}</td></tr>`}).join('')}</table></div></div>
+<p class="small">개업률·폐업률은 공공데이터로 확인되지 않아 싣지 않았습니다. ${OFF}에서 확인하세요.</p>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+V['stats-pop']=()=>{const m=M(S.dong,'음식');return head('인구 통계','주민등록 기준 거주 인구와 연령 구조입니다.')+ctrl({noUp:true})+`<div class="grid">${kpi('거주 인구',f0(m.pop)+'명',SRC.pop+' 기준')}${kpi('세대 수',f0(m.hh)+'세대','')}${kpi('세대당 인구',f2(m.hhs)+'명','')}${kpi('60세 이상 비율',f1(m.old)+'%','20~30대 '+f1(m.young)+'%')}<div class="card c6"><h2>연령 구조 (${S.dong})</h2>${bars(ag6L.map((l,i)=>({l,v:m.ag6[i]})),{fmt:f1,unit:'%'})}<h2 style="margin-top:14px">성별</h2>${donut([{l:'여성',v:m.fem},{l:'남성',v:m.male}])}</div><div class="card c6"><h2>동별 거주 인구 TOP 8</h2>${bars(D.map(d=>({l:d.n,v:M(d.n,'음식').pop,sel:d.n===S.dong})).sort((a,b)=>b.v-a.v).slice(0,8),{unit:'명'})}</div></div>
+<p class="small">주민등록 인구이며 실제 거주·생활 인구와 다를 수 있습니다. 유동인구는 공공데이터로 확인되지 않아 싣지 않았습니다.</p>${srcLine(SRC_P)}`};
+V['stats-national']=()=>head('소상공인 통계(국가승인)','국가승인 통계는 통계청과 중소벤처기업부의 공식 발표를 기준으로 합니다.')+`<p class="note">이 사이트는 국가승인통계를 가공해 싣지 않습니다. 아래 공식 창구에서 직접 확인하세요.</p><div class="grid">${LINK('https://kosis.kr','국가통계포털 KOSIS','전국 시군구 통계 검색')}${LINK('https://www.mss.go.kr','중소벤처기업부','소상공인 실태조사 발표')}${LINK('https://bigdata.sbiz.or.kr','소상공인365 통계','원본 통계 화면')}</div>`;
+
+/* ---------- 화면: 광명형 ---------- */
+V['gm-circular']=()=>head('지역순환경제 지표','매출이 광명 안에서 얼마나 순환하는지 보는 정책용 지표입니다.')+`<div class="card na"><p><span class="pill p-mute">공공데이터 미제공</span></p><p>지역 내 소비 비율, 지역화폐 결제 비율, 지역 내 조달 비율은 <b>광명시·카드사·지역화폐 운영사가 보유한 결제 데이터</b>가 있어야 계산할 수 있고, 공개된 공공데이터에는 없습니다. 그래서 수치를 싣지 않았습니다.</p>
+<h2 style="margin-top:14px">데이터가 생기면 이렇게 연결할 수 있습니다</h2><ul class="t"><li>지역화폐 결제 내역의 동·업종별 월 집계(개인정보 제거) — 광명시 협의 필요</li><li>카드 소비 지역 구분 통계 — 공공기관·카드사 제휴 자료</li><li>이 사이트의 동·업종 구조에 맞추어 순환지수를 계산해 지도와 순위로 표시</li></ul></div>`;
+V['gm-zones']=()=>{
+  const a=S.zone[0],b=S.zone[1],all=ZONES.map(z=>{const m=M(z+' 생활권','음식');return{z,dongs:listFor(z+' 생활권').length,m}}),A=all.find(x=>x.z===a),B=all.find(x=>x.z===b),sel=i=>`<label>생활권 ${i?'B':'A'}<select data-zone="${i}">${ZONES.map(z=>`<option ${S.zone[i]===z?'selected':''}>${z}</option>`).join('')}</select></label>`;
+  const f=[m=>m.tot,m=>m.pop,m=>m.hh,m=>m.perAll,m=>m.young],mx=f.map(g=>Math.max(...all.map(x=>g(x.m)))),sc=x=>f.map((g,i)=>g(x.m)/mx[i]*100);
+  return head('생활권별 비교','광명·철산·하안·소하·일직 생활권을 나란히 비교합니다.')+`<p class="note">생활권 구분은 이 사이트 제작자가 행정동을 임의로 묶은 것입니다(소하 생활권에 학온동 포함). 광명시의 공식 구분이 아닙니다.</p><div class="bar">${sel(0)}${sel(1)}</div>
+  <div class="grid"><div class="card c5"><h2>${a} vs ${b} (생활권 중 최대값=100)</h2>${radar(['업소 수','인구','세대 수','1천명당 업소','20~30대 비율'],[{n:a,v:sc(A)},{n:b,v:sc(B)}])}</div>
+  <div class="card c7 scroll"><h2>생활권 전체 비교</h2><table><tr><th>생활권</th><th>동 수</th><th>업소수</th><th>인구</th><th>세대</th><th>1천명당</th><th>60세↑</th><th>20~30대</th></tr>${all.map(x=>`<tr class="${x.z===a||x.z===b?'sel':''}"><td>${x.z}</td><td>${x.dongs}</td><td>${f0(x.m.tot)}</td><td>${f0(x.m.pop)}</td><td>${f0(x.m.hh)}</td><td>${f1(x.m.perAll)}</td><td>${f1(x.m.old)}%</td><td>${f1(x.m.young)}%</td></tr>`).join('')}</table></div></div>${srcLine(SRC_S+' · '+SRC_P+' · '+SRC_C)}`;
+};
+
+/* ---------- 화면: 이용안내 ---------- */
+V['guide-terms']=()=>head('이용조건·출처·면책','이 사이트를 쓰기 전에 꼭 읽어 주세요.')+`
+<div class="card disc2"><h2>1. 비공식 사이트입니다</h2><p>이 사이트는 개인이 공공데이터를 활용해 만든 <b>비공식 사이트</b>입니다. <b>소상공인시장진흥공단, 소상공인365, 행정안전부, 광명시, 그 밖의 어떤 공공기관과도 관련이 없으며</b> 이들이 운영·후원·보증·승인하지 않았습니다. '소상공인365' 등 기관·서비스 이름은 각 소유자의 것이며, 메뉴 구성을 참고했음을 밝히기 위해서만 언급합니다.</p></div>
+<div class="card scroll" style="margin-top:14px"><h2>2. 사용한 공공데이터와 출처</h2><table class="tl"><tr><th>자료</th><th>제공 기관</th><th>기준 시점</th><th>이 사이트에서 쓰인 곳</th></tr>
+<tr><td>상가(상권)정보 (동별·업종별 업소 수)</td><td>소상공인시장진흥공단 · 공공데이터포털(data.go.kr)</td><td>${SRC.shops}</td><td>업소 수, 업종 구성비, 지도</td></tr>
+<tr><td>행정동별 주민등록 인구 및 세대현황</td><td>행정안전부 · 공공데이터포털</td><td>${SRC.pop}</td><td>거주 인구, 세대 수, 성별</td></tr>
+<tr><td>행정동별 성/연령별 인구</td><td>행정안전부 · 공공데이터포털</td><td>${SRC.pop}</td><td>연령 구조</td></tr>
+<tr><td>행정동 경계(지도 도형)</td><td>통계청(현 국가데이터처) 통계지리정보서비스(SGIS) 행정동 경계 — 공공누리 제1유형(출처표시). 보정·재배포: vuski/admdongkor, CC BY 4.0 (<a href="https://github.com/vuski/admdongkor" target="_blank" rel="noopener">github.com/vuski/admdongkor</a>)</td><td>${SRC.geo}</td><td>지도. 이 사이트가 도형을 단순화함(원본과 다름). 출처표시 의무에 따라 위와 같이 표기</td></tr></table>
+<p class="small">공공데이터포털에 표시된 이용허락범위는 '제한 없음'입니다. 열람하는 시점과 기준 시점이 달라 최신 상태와 다를 수 있습니다.</p></div>
+<div class="card" style="margin-top:14px"><h2>3. 이 사이트가 직접 계산한 값</h2><p>'인구 1천명당 업소 수', '업종 특화도(LQ)', '인구밀도', '면적(근사)', '60세 이상 비율', '입지 상대 점수' 등은 위 자료로 <b>이 사이트가 계산한 참고 값</b>입니다. 기관이 발표한 공식 통계가 아니며 계산 방식에 따라 공식 값과 다를 수 있습니다. 동 면적은 단순화한 경계로 계산했습니다.</p></div>
+<div class="card" style="margin-top:14px"><h2>4. 싣지 않은 정보</h2><p>매출, 유동인구, 소득·소비, 개업·폐업률, 배달, 검색·SNS 트렌드, 지역순환 지표는 이 사이트가 확인한 무료 공공데이터에 없어 <b>싣지 않았습니다.</b> '공공데이터 미제공'으로 표시한 화면은 ${OFF} 등 공식 자료를 보세요.</p></div>
+<div class="card" style="margin-top:14px"><h2>5. 판단 전에 공식 자료를 확인하세요</h2><ul class="t"><li>창업, 폐업, 대출, 투자, 임대차 계약 같은 <b>중요한 결정의 근거로 이 사이트를 쓰지 마세요.</b></li><li>이 사이트의 수치는 참고용이며 정확성·최신성·완전성을 보증하지 않습니다. 오류나 누락이 있을 수 있습니다.</li><li>지원사업 정보는 안내 목록입니다. 신청 자격·금액·기간은 반드시 주관 기관의 공식 공고를 확인하세요.</li><li>이 사이트를 이용해 생긴 손해에 대해 제작자는 법이 허용하는 범위에서 책임을 지지 않습니다.</li><li>필요하면 소상공인시장진흥공단 상담, 광명시, 세무사·회계사·변호사 같은 전문가와 상의하세요.</li></ul></div>
+<div class="card" style="margin-top:14px"><h2>6. 지도와 구분에 대한 안내</h2><ul class="t"><li>동 경계는 단순화한 도형이라 실제 행정 경계와 다릅니다. 법적·행정적 용도로 쓸 수 없습니다.</li><li>시청·역 등 주요 지점은 <b>대략 위치</b>입니다.</li><li>생활권(광명·철산·하안·소하·일직) 묶음은 제작자가 임의로 정한 것으로 광명시의 공식 구분이 아닙니다.</li></ul></div>
+<div class="card" style="margin-top:14px"><h2>7. 개인정보</h2><p>이 사이트는 회원가입이 없으며 이름·연락처 등 개인정보를 수집하지 않습니다. 경영진단·자가진단에 입력한 값은 사용 중인 브라우저 안에서만 계산되고 서버로 보내거나 저장하지 않습니다.</p></div>
+<div class="card" style="margin-top:14px"><h2>8. 정정·삭제 요청</h2><p>잘못된 정보나 권리 침해가 있으면 운영자에게 알려 주세요. 확인 후 바로 고치거나 내리겠습니다. (운영자 연락처는 이 사이트를 공개 운영할 때 이 자리에 기재해야 합니다.)</p></div>`;
+V['guide-intro']=()=>head('서비스 소개','소상공인365의 메뉴 구성을 참고해 광명시 범위로 줄여 담은 비공식 사이트입니다. 공공데이터로 확인되는 것만 싣습니다.')+`<div class="card scroll"><table><tr><th>참고한 메뉴 구성</th><th>이 사이트의 위치</th><th>달라진 점</th></tr>
+ <tr><td>빅데이터 상권분석</td><td>상권분석 9개 탭</td><td>전국 지도 대신 광명 19개 동 단위, 업소·인구 중심. 매출·유동인구 화면은 '미제공'</td></tr>
+ <tr><td>내 가게 경영진단</td><td>빅데이터 경영진단, 자가진단 3종</td><td>입력값으로 이익 구조만 계산. 동종 평균 비교 없음</td></tr>
+ <tr><td>상권·시장 트렌드</td><td>트렌드, SNS, 관광·축제, 뉴스, 우수 소상공인, 정책, 지원사업</td><td>트렌드·SNS는 '미제공', 나머지는 공식 창구 안내</td></tr>
+ <tr><td>소상공인 대시보드</td><td>주요·매출·업소·인구·국가승인 통계</td><td>업소·인구 통계만 수치 제공</td></tr>
+ <tr><td>(없음)</td><td>광명형 특화</td><td>생활권별 비교, 광명 지원사업 안내. 순환경제 지표는 자료 확보 후 연결 예정</td></tr></table></div>
+ <p class="small">이 사이트는 소상공인365와 다른 비공식 사이트입니다. <a href="#guide-terms" data-go="guide|terms">이용조건·출처·면책</a>을 확인하세요.</p>`;
+V['guide-data']=()=>head('기준 데이터','어떤 값이 어디서 왔는지, 무엇이 빠져 있는지 안내합니다.')+`<div class="card scroll"><table class="tl"><tr><th>항목</th><th>구분</th><th>출처·기준</th></tr>
+<tr><td>동별·업종별 업소 수</td><td><span class="pill p-good">공공데이터</span></td><td>소상공인시장진흥공단 상가(상권)정보, ${SRC.shops} 기준, 광명시 ${f0(CITY.tot)}곳</td></tr>
+<tr><td>거주 인구·세대·성별·연령</td><td><span class="pill p-good">공공데이터</span></td><td>행정안전부 주민등록 인구 및 세대현황 / 성·연령별 인구, ${SRC.pop} 기준, 광명시 ${f0(CITY.pop)}명</td></tr>
+<tr><td>동 경계 지도</td><td><span class="pill p-warn">단순화</span></td><td>통계청 SGIS 행정동 경계(공공누리 제1유형, 출처표시) · vuski/admdongkor(CC BY 4.0) 보정본을 단순화</td></tr>
+<tr><td>1천명당 업소 수, LQ, 인구밀도, 비율</td><td><span class="pill p-warn">자체 계산</span></td><td>위 자료로 이 사이트가 계산한 참고 값</td></tr>
+<tr><td>매출, 유동인구, 소득·소비, 개폐업률, 배달, 트렌드·SNS, 지역순환</td><td><span class="pill p-mute">미제공</span></td><td>공공데이터로 확인되지 않아 싣지 않음</td></tr></table></div>
+<p class="note" style="margin-top:14px">업종은 상권업종 대분류 10개입니다. 생활권 구분은 제작자가 임의로 묶은 것이고, 지도의 주요 지점은 대략 위치입니다. 자세한 내용은 '이용조건·출처·면책'을 보세요.</p>`;
+V['guide-opendata']=()=>head('공공데이터 안내','이 사이트가 쓴 자료의 원본을 찾는 곳입니다.')+`<div class="grid">${LINK('https://www.data.go.kr','공공데이터포털','상가(상권)정보, 행정동별 인구 오픈API 원본')}${LINK('https://bigdata.sbiz.or.kr','소상공인365 개방·활용','공식 오픈API와 공공데이터 안내')}${LINK('https://sgis.kostat.go.kr','통계지리정보서비스(SGIS)','행정동 경계와 통계 원본')}</div>`;
+V['guide-notice']=()=>head('공지사항','서비스 변경과 데이터 갱신 소식입니다.')+`<div class="card"><p style="margin:0 0 8px"><span class="pill p-warn">중요</span> 이 사이트는 <b>비공식</b>이며 소상공인시장진흥공단·행정안전부·광명시와 무관합니다.</p><p style="margin:0"><span class="pill p-mute">안내</span> 데이터 기준: 업소 ${SRC.shops}, 인구 ${SRC.pop}. 시안 단계이며 공공데이터로 확인되지 않은 항목은 싣지 않았습니다.</p></div>`;
+V['guide-qna']=()=>head('문의사항','의견을 남길 곳은 아직 연결되지 않았습니다.')+`<p class="note">이 페이지에는 접수 창구가 없습니다. 공개 운영 전에 운영자가 문의 접수 방법(이메일, 게시판)과 정정·삭제 요청 창구를 이 자리에 기재해야 합니다. 공식 기관 문의는 각 기관 창구를 이용하세요.</p>`;
+V['guide-sitemap']=()=>head('사이트맵','모든 메뉴를 한눈에 보고 바로 이동합니다.')+`<div class="card sm">${MENU.map(m=>`<div><h2>${m[1]}</h2>${m[2].map(x=>`<button data-go="${m[0]}|${x[0]}">${x[1]}</button>`).join('')}</div>`).join('')}</div>`;
+V['guide-manual']=()=>head('매뉴얼','처음 쓰는 분을 위한 사용법입니다.')+`<div class="card"><details open><summary>1. 처음 시작하기</summary><p>화면 위쪽 메뉴에서 '빅데이터 상권분석'을 누르고 '간단분석'에서 동과 업종을 고르세요.</p></details><details><summary>2. 내 가게 진단하기</summary><p>'내 가게 경영진단'에서 월 매출과 비용을 입력하고 '진단하기'를 누르면 이익 구조가 계산됩니다.</p></details><details><summary>3. 지도 보기</summary><p>'상권지도'에서 보고 싶은 지표를 고르고 동을 누르면 그 동으로 바뀝니다.</p></details><details><summary>4. 자가진단</summary><p>문항마다 가장 가까운 답을 고르고 '결과 보기'를 누르세요.</p></details><details><summary>5. '공공데이터 미제공'이란?</summary><p>이 사이트가 확인한 무료 공공데이터에 없어 수치를 싣지 않은 화면입니다. 소상공인365 등 공식 사이트에서 확인하세요.</p></details></div>`;
+
+/* ---------- 렌더 ---------- */
+function render(){
+  $('#nav').innerHTML=MENU.map(m=>`<button class="${S.m===m[0]?'on':''} ${m[0]==='gm'?'gm':''}" data-m="${m[0]}">${m[1]}</button>`).join('');
+  const c=MENU.find(m=>m[0]===S.m);
+  $('#sub .wrap').innerHTML=c[2].map(s=>`<button class="${S.s===s[0]?'on':''}" data-s="${s[0]}">${s[1]}</button>`).join('');
+  const fn=V[S.m+'-'+S.s];$('#view').innerHTML=fn?fn():'';
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-m],[data-s],[data-go],[data-up],[data-dong],[data-metric],[data-theme],[data-radius],[data-act],[data-sup]');
+  if(e.target.closest('#logo')){go('analysis','simple');return}
+  if(!t)return;const d=t.dataset;
+  if(d.go)e.preventDefault();
+  if(d.m){go(d.m,MENU.find(m=>m[0]===d.m)[2][0][0]);return}
+  if(d.s){go(S.m,d.s);return}
+  if(d.go){const p=d.go.split('|');go(p[0],p[1]);return}
+  if(d.up)S.up=d.up;
+  if(d.dong){S.dong=d.dong}
+  if(d.metric)S.metric=d.metric;
+  if(d.theme)S.theme=d.theme;
+  if(d.radius)S.radius=+d.radius;
+  if(d.sup)S.sup=d.sup;
+  if(d.act==='run')S.rs={dong:S.dong,up:S.up};
+  if(d.act==='lm')S.lm=!S.lm;
+  if(d.act==='diag'){const g=id=>+$('#f_'+id).value||0;S.diag={sales:g('sales')||1,food:g('food'),labor:g('labor'),rent:g('rent'),other:g('other'),visits:g('visits')}}
+  if(d.act==='quiz'){const k=d.k,Q=QS[k],n=Q.q.length/2,a={};let miss=0;
+    for(let i=0;i<n;i++){const c=document.querySelector(`input[name="${k}${i}"]:checked`);if(c)a[i]=+c.value;else miss++}
+    S.ans[k]=a;if(miss){$('#qmsg').textContent=`아직 ${miss}개 문항에 답하지 않았습니다.`;return}
+    S.res[k]={cs:Q.c.map((l,ci)=>{const ids=[];for(let i=0;i<n;i++)if(Q.q[i*2+1]===ci)ids.push(a[i]);return{l,v:ids.length?(ids.reduce((s,v)=>s+v,0)/ids.length-1)/4*100:0}})}}
+  render();
+});
+document.addEventListener('change',e=>{
+  const t=e.target,d=t.dataset;
+  if(d.set){S[d.set]=t.value}
+  else if(d.zone!==undefined){S.zone[+d.zone]=t.value}
+  else if(d.w){S.w[d.w]=+t.value}
+  else return;
+  render();
+});
+$('#logo').addEventListener('keydown',e=>{if(e.key==='Enter')go('analysis','simple')});
+function fromHash(){const h=location.hash.slice(1).split('-');if(h.length===2&&V[h[0]+'-'+h[1]]){S.m=h[0];S.s=h[1]}}
+window.addEventListener('hashchange',()=>{fromHash();render()});
+fromHash();render();
+/* 공유 데이터베이스에 더 새로운 스냅샷이 있으면 덮어씁니다(없으면 내장 값 사용) */
+function applySnap(v){
+  if(!v||!v.RD)return false;
+  const ok=DN.every(n=>Array.isArray(v.RD[n])&&v.RD[n].length===CATS.length&&v.RD[n].every(x=>Number.isFinite(x)));
+  if(!ok)return false;
+  DN.forEach(n=>{RD[n]=v.RD[n].slice()});
+  if(v.stdr)SRC.shops=v.stdr.replace(/^(\d{4})(\d{2})$/,'$1.$2');
+  if(v.POP&&DN.every(n=>Array.isArray(v.POP[n])&&v.POP[n].length===15&&v.POP[n].every(x=>Number.isFinite(x)))){DN.forEach(n=>{POPD[n]=v.POP[n].slice()});if(v.popYm)SRC.pop=v.popYm.replace(/^(\d{4})(\d{2})$/,'$1.$2')}
+  calcCity();for(const k of Object.keys(cache))delete cache[k];
+  const b=document.querySelector('.sample');if(b)b.textContent='업소 '+SRC.shops+' · 인구 '+SRC.pop+' 기준';
+  render();return true;
+}
+(async()=>{try{
+  if(!window.claude||!claude.use)return;
+  const db=await claude.use('db');if(!db)return;
+  const snap=await Promise.race([db.doc('snapshot/stores').get(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),10000))]);
+  let v=snap&&typeof snap.data==='function'?snap.data():snap;
+  if(v&&v.data&&!v.RD)v=v.data;
+  applySnap(v);
+}catch(e){}})();
+</script>
+</body>
+</html>
